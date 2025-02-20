@@ -1,12 +1,13 @@
-import { verify } from "jsonwebtoken";
-
-const SECRET_KEY = process.env.SECRET_KEY;
+import jwt from "jsonwebtoken";
 
 const ValidateToken = async (req, res, next) => {
+
+    const SECRET_KEY = process.env.SECRET_KEY;
+    
     try
     {
         const token = req.header("token");
-        const payload = verify(token, SECRET_KEY);
+        const payload = jwt.verify(token, SECRET_KEY);
         req._id = payload._id;
         next();
     }

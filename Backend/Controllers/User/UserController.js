@@ -97,4 +97,32 @@ const Login = async (req, res) => {
     }
 };
 
-export { Signup, Login }
+const Get = async (req, res) => {    
+    try
+    {
+        const user = await User.findById(req._id);
+        if(!user)
+            return res.json({
+                success: false,
+                message: "User not found!"
+            });
+
+        return res.json({
+            success: true,
+            message: "User details fetched successfully",
+            user: {
+                name: user.name,
+                email: user.email
+            }
+        });
+    }
+    catch(err)
+    {
+        return res.json({
+            success: false,
+            message: `Internal Server Error: ${err}`
+        });
+    }
+};
+
+export { Signup, Login, Get }
