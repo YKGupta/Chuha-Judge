@@ -13,7 +13,7 @@ const ValidateToken = async (req, res, next) => {
     }
     catch(err)
     {
-        return res.json({
+        return res.status(500).json({
             success: false,
             message: `Internal Server Error: ${err}`
         });

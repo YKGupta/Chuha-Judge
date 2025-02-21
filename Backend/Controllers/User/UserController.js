@@ -44,7 +44,7 @@ const Signup = async (req, res) => {
     }
     catch(err)
     {
-        return res.json({
+        return res.status(500).json({
             success: false,
             message: `Internal Server Error: ${err}`
         });
@@ -90,7 +90,7 @@ const Login = async (req, res) => {
     }
     catch(err)
     {
-        return res.json({
+        return res.status(500).json({
             success: false,
             message: `Internal Server Error: ${err}`
         });
@@ -118,7 +118,7 @@ const Get = async (req, res) => {
     }
     catch(err)
     {
-        return res.json({
+        return res.status(500).json({
             success: false,
             message: `Internal Server Error: ${err}`
         });
