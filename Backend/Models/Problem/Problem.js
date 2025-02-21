@@ -33,7 +33,7 @@ const ProblemSchema = new Schema({
     },
     sampleTestCases: [ { 
         type: mongoose.Types.ObjectId,
-        ref: "TestCases"
+        ref: "TestCase"
     } ]
 });
 

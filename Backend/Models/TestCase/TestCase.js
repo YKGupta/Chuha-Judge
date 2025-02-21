@@ -1,13 +1,12 @@
-import { model, Types, Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 
 const TestCaseSchema = Schema({
     testCaseId: {
         type: Number,
         required: true
     },
-    problem: {
-        type: Types.ObjectId,
-        ref: 'Problems',
+    problemCode: {
+        type: String,
         required: true
     },
     input: {
