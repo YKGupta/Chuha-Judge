@@ -1,10 +1,9 @@
 import User from '../../Models/User/User.js';
 import { hash, compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
 
 const Signup = async (req, res) => {
-
-    const SECRET_KEY = process.env.SECRET_KEY;
     
     try
     {
@@ -26,20 +25,54 @@ const Signup = async (req, res) => {
 
         await newUser.save();
 
-        const payload = {
-            _id: newUser._id,
-        };
-
-        const token = jwt.sign(payload, SECRET_KEY);
+        await SendVerificationEmail(email, newUser._id);
 
         return res.json({
             success: true,
-            message: "User created successfully",
-            token,
+            message: "User created successfully, verify email",
             user: {
                 name,
                 email
             }
+        });
+    }
+    catch(err)
+    {
+        return res.status(500).json({
+            success: false,
+            message: `Internal Server Error: ${err}`
+        });
+    }
+};
+
+const Verify = async (req, res) => {
+
+    const SECRET_KEY = process.env.SECRET_KEY;
+
+    try
+    {
+        const token = req.params.token;
+        const payload = jwt.verify(token, SECRET_KEY);
+        
+        const user = await User.findById(payload._id);
+        if(!user)
+            return res.json({
+                success: false,
+                message: "Invalid Token"
+            });
+
+        if(user.isVerified)
+            return res.json({
+                success: false,
+                message: "User already verified"
+            });
+        
+        user.isVerified = true;
+        await user.save();
+
+        res.json({
+            success: true,
+            message: "User verified successfully"
         });
     }
     catch(err)
@@ -63,6 +96,12 @@ const Login = async (req, res) => {
             return res.json({
                 success: false,
                 message: "User not found!"
+            });
+        
+        if(!oldUser.isVerified)
+            return res.json({
+                success: false,
+                message: "Email not verified!"
             });
 
         const isPasswordCorrect = compare(password, oldUser.hashedPassword);
@@ -106,6 +145,12 @@ const Get = async (req, res) => {
                 success: false,
                 message: "User not found!"
             });
+        
+        if(!user.isVerified)
+            return res.json({
+                success: false,
+                message: "Email not verified!"
+            });
 
         return res.json({
             success: true,
@@ -125,4 +170,37 @@ const Get = async (req, res) => {
     }
 };
 
-export { Signup, Login, Get }
+const SendVerificationEmail = async (email, _id) => {
+
+    const SECRET_KEY = process.env.SECRET_KEY;
+    const HOST = process.env.HOST;
+    const PORT = process.env.PORT;
+
+    const payload = {
+        _id
+    };
+
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
+    const verificationLink = `${HOST}:${PORT}/users/verify/${token}`;
+
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: process.env.USER_EMAIL,
+            pass: process.env.USER_PASSWORD
+        }
+    });
+
+    const mailOptions = {
+        from: process.env.USER_EMAIL,
+        to: email,
+        subject: "Verify your email for Chuha Judge",
+        html: `<h2>Click the link below to verify your email<h2>
+               <a href="${verificationLink}">${verificationLink}</a>
+               <p>This link expires in 1 hour</p>`
+    };
+
+    await transporter.sendMail(mailOptions);
+};
+
+export { Signup, Login, Get, Verify }
