@@ -1,0 +1,95 @@
+/* Look for border color, color */
+
+.signupContainer
+{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.pretext{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text{
+    font-size: 15vw;
+    color: rgb(0, 60, 128);
+}
+
+.brace{
+    font-size: 35vw;
+    color: rgb(0, 60, 128);
+}
+
+.signupWindow
+{
+    width: 30%;
+    height: 75vh;
+    display: grid;
+    grid-template-rows: 1fr 6fr;
+    overflow: hidden;
+}
+
+.signupWindow > h1{
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.signupWindow > form{
+    width: 100%;
+    margin-top: 10%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.signupWindow > form > div{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.signupWindow > form > div > p{
+    margin-top: -2%;
+    margin-left: 7%;
+    align-self: flex-start;
+    font-size: 14px;
+}
+
+/* Inputs Fields */
+.signupWindow > form > div > input{
+    width: 90%;
+    height: 40px;
+    border-radius: 7px;
+    margin: 10px 0px;
+    outline: none;
+    border: 1px solid black;
+    padding: 0% 2%;
+}
+
+/* Submit Button */
+.signupWindow > form > input{
+    width: 20%;
+    height: 40px;
+    margin: 10px 0px;
+    border-radius: 7px;
+    border: 1px solid rgb(172, 172, 172);
+    background-color: transparent;
+    outline: none;
+}
+
+.signupWindow > form > a{
+    color: black;
+    margin-top: 2%;
+    font-size: 14px;
+    text-decoration: none;
+}

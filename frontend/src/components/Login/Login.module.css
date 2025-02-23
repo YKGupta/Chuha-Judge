@@ -1,0 +1,94 @@
+/* Look for border color, color */
+
+.loginContainer
+{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.pretext{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text{
+    font-size: 15vw;
+    color: rgb(0, 60, 128);
+}
+
+.brace{
+    font-size: 35vw;
+    color: rgb(0, 60, 128);
+}
+
+.loginWindow
+{
+    width: 30%;
+    height: 75vh;
+    display: grid;
+    grid-template-rows: 1fr 4fr;
+    overflow: hidden;
+}
+
+.loginWindow > h1{
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.loginWindow > form{
+    width: 100%;
+    margin-top: 15%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.loginWindow > form > div{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.loginWindow > form > div > p{
+    margin-top: -2%;
+    margin-left: 7%;
+    align-self: flex-start;
+    font-size: 14px;
+}
+
+/* Inputs Fields */
+.loginWindow > form > div > input{
+    width: 90%;
+    height: 40px;
+    border-radius: 7px;
+    margin: 20px 0px;
+    outline: none;
+    border: 1px solid black;
+    padding: 0% 2%;
+}
+
+/* Submit Button */
+.loginWindow > form > input{
+    width: 20%;
+    height: 40px;
+    margin: 20px 0px;
+    border-radius: 7px;
+    border: 1px solid rgb(172, 172, 172);
+    background-color: transparent;
+    outline: none;
+}
+
+.loginWindow > form > a{
+    color: black;
+    font-size: 14px;
+    text-decoration: none;
+}
