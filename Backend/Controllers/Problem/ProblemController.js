@@ -18,8 +18,28 @@ const Get = async (req, res) => {
                 problemStatement: problem.problemStatement,
                 inputText: problem.inputText,
                 outputText: problem.outputText,
+                limits: problem.limits,
                 sampleTestCases: problem.sampleTestCases
             }
+        });
+    }
+    catch(err)
+    {
+        return res.status(500).json({
+            success: false,
+            message: `Internal Server Error: ${err}`
+        });
+    }
+};
+
+const GetAll = async (req, res) => {
+    try
+    {
+        const problems = await Problem.find({});
+        return res.json({
+            success: true,
+            message: "Problems found successfully",
+            problems
         });
     }
     catch(err)
@@ -69,4 +89,4 @@ const Add = async (req, res) => {
     }
 };
 
-export { Get, Add };
+export { Get, GetAll, Add };

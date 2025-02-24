@@ -3,8 +3,11 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import LoginHandler from '../../handlers/login';
 import styles from './Login.module.css';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
+
+    const navigate = useNavigate();
 
     const form = useFormik({
         initialValues: {
@@ -13,9 +16,9 @@ const Login = () => {
         },
         validationSchema: Yup.object({
             email: Yup.string().email("Invalid email address").required("Email is a required field"),
-            password: Yup.string().min(8, "Password must be atleast 8 characters").required("Password is a required field")
+            password: Yup.string().min(3, "Password must be atleast 3 characters").required("Password is a required field")
         }),
-        onSubmit: (values) => LoginHandler(values)
+        onSubmit: (values) => LoginHandler(values, navigate)
     });
 
     return (
@@ -44,7 +47,7 @@ const Login = () => {
                         }
                     </div>
                     <input type="submit" value="Login" />
-                    <a href='/'>Don&apos;t have an account? Sign up</a>
+                    <Link to='/signup'>Don&apos;t have an account? Sign up</Link>
                 </form>
             </div>
             <div className={`${styles.posttext}`}>

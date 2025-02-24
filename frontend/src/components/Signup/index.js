@@ -3,8 +3,13 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import SignupHandler from '../../handlers/signup';
 import styles from './Signup.module.css';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 const Signup = () => {
+
+    const navigate = useNavigate();
+    const dispatcher = useDispatch();
 
     const form = useFormik({
         initialValues: {
@@ -16,10 +21,10 @@ const Signup = () => {
         validationSchema: Yup.object({
             name: Yup.string().required("Name is a required field"),
             email: Yup.string().email("Invalid email address").required("Email is a required field"),
-            password: Yup.string().min(8, "Password must be atleast 8 characters").required("Password is a required field"),
+            password: Yup.string().min(3, "Password must be atleast 3 characters").required("Password is a required field"),
             confirmPassword: Yup.string().oneOf([Yup.ref('password')], "Passwords must match").required("Confirm Password is a required field")
         }),
-        onSubmit: (values) => SignupHandler(values)
+        onSubmit: (values) => SignupHandler(values, navigate, dispatcher)
     });
 
     return (
@@ -64,7 +69,7 @@ const Signup = () => {
                         }
                     </div>
                     <input type="submit" value="Sign Up" />
-                    <a href='/'>Already registered? Login</a>
+                    <Link to='/login'>Already registered? Login</Link>
                 </form>
             </div>
             <div className={`${styles.posttext}`}>

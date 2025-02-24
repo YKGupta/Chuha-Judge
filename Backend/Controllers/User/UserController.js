@@ -70,10 +70,7 @@ const Verify = async (req, res) => {
         user.isVerified = true;
         await user.save();
 
-        res.json({
-            success: true,
-            message: "User verified successfully"
-        });
+        res.redirect(`${process.env.FRONTEND_HOST}/login`);
     }
     catch(err)
     {
@@ -104,13 +101,13 @@ const Login = async (req, res) => {
                 message: "Email not verified!"
             });
 
-        const isPasswordCorrect = compare(password, oldUser.hashedPassword);
+        const isPasswordCorrect = await compare(password, oldUser.hashedPassword);
         if(!isPasswordCorrect)
             return res.json({
                 success: false,
                 message: "Wrong password!"
             });
-        
+
         const payload = {
             _id: oldUser._id,
         };

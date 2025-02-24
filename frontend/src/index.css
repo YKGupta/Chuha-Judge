@@ -9,6 +9,10 @@ body {
 	width: 100%;
 }
 
+a, button{
+	cursor: pointer;
+}
+
 @font-face {
 	font-family: JetBrains-Regular;
 	src: url('../assets/fonts/JetBrainsMono-Regular.woff2');
