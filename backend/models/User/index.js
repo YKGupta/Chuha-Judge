@@ -28,6 +28,9 @@ const UserSchema = Schema({
         type: Boolean,
         default: false,
     },
+    refreshToken: {
+        type: String
+    },
     oauthProvider: {
         type: String,
         enum: [ "google", "github", null ],

@@ -1,7 +1,8 @@
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import User from '../../models/User/index.js';
 import SendMail from '../../utils/SendMail/index.js';
 import GenerateToken from '../../utils/GenerateToken/index.js';
+import jwt from 'jsonwebtoken';
 
 /**
  * Handles signing up new users. The params mentioned are request body.
@@ -131,4 +132,73 @@ const VerificationHandler = async (req, res) => {
     }
 };
 
-export { RegisterHandler, VerificationHandler };
+/**
+ * Handles logging up new users. The params mentioned are request body.
+ * @param {string} email - Email of the user.
+ * @param {string} password - Password of the user.
+ */
+const LoginHandler = async (req, res) => {
+
+    const { email, password } = req.body;
+
+    try
+    {
+        const user = await User.findOne({ email });
+        if(!user)
+            return res.status(400).json({
+                success: false,
+                message: "User not found!"
+            });
+
+        const isPasswordCorrect = await compare(password, user.password);
+        if(!isPasswordCorrect)
+            return res.status(400).json({
+                success: false,
+                message: "Wrong password!"
+            });
+        
+        const accessToken = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_ACCESS_SECRET,
+            { expiresIn: `${process.env.ACCESS_TOKEN_TTL}m`}
+        );
+
+        const refreshToken = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_REFRESH_SECRET,
+            { expiresIn: `${process.env.REFRESH_TOKEN_TTL}d`}
+        );
+
+        user.refreshToken = refreshToken;
+        await user.save();
+
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            maxAge: process.env.ACCESS_TOKEN_TTL * 60 * 1000
+        });
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            maxAge: process.env.REFRESH_TOKEN_TTL * 24 * 60 * 60 * 1000
+        });
+
+        return res.json({
+            success: true,
+            message: "User logged in successfully!",
+            accessToken
+        });
+    }
+    catch(err)
+    {
+        res.status(500).json({
+            success: false,
+            message: JSON.stringify(err)
+        });
+    }
+};
+
+export { RegisterHandler, VerificationHandler, LoginHandler };
