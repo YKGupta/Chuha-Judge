@@ -15,7 +15,8 @@ const UserSchema = Schema({
         type: String
     },
     verificationToken: {
-        type: String
+        type: String,
+        index: true
     },
     tokenExpiresAt: {
         type: Date

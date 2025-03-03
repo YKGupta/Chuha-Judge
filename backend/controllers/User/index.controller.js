@@ -1,6 +1,7 @@
 import { hash } from 'bcrypt';
-import nodemailer from 'nodemailer';
-import User from '../../models/User';
+import User from '../../models/User/index.js';
+import SendMail from '../../utils/SendMail/index.js';
+import GenerateToken from '../../utils/GenerateToken/index.js';
 
 /**
  * Handles signing up new users. The params mentioned are request body.
@@ -25,7 +26,7 @@ const RegisterHandler = async (req, res) => {
         
         // Either the user is new, or a user who might want to verify himself
         
-        if(user && user.lastVerificationEmailSent && user.lastVerificationEmailSent >= Date.now() - process.env.VERIFICATION_WINDOW_TIME_LIMIT)
+        if(user && user.lastVerificationEmailSent && user.lastVerificationEmailSent >= Date.now() - process.env.VERIFICATION_WINDOW_TTL * 1000)
         {
             // Wait before sending a new mail
             return res.json({
@@ -42,7 +43,7 @@ const RegisterHandler = async (req, res) => {
                 username,
                 email,
                 password: hashedPassword,
-                verificationToken: GenerateVerificationToken(),
+                verificationToken: GenerateToken(),
                 tokenExpiresAt: new Date(Date.now() + process.env.VERIFICATION_TOKEN_TTL * 1000)
             });
         }
@@ -50,7 +51,7 @@ const RegisterHandler = async (req, res) => {
         else if(user.tokenExpiresAt < Date.now())
         {
             // Only token has expired, so we will generate a new token
-            const token = GenerateVerificationToken();
+            const token = GenerateToken();
             user.verificationToken = token;
             user.tokenExpiresAt = new Date(Date.now() + process.env.VERIFICATION_TOKEN_TTL * 1000);
         }
@@ -61,9 +62,9 @@ const RegisterHandler = async (req, res) => {
         // Send a verification mail
         SendMail(email, 
             `Verify your email for Chuha Judge`, 
-            `<h2>Click the link below to verify your email<h2>
-            <a href="LINK">LINK</a>
-            <p>This link expires in 1 hour</p>`
+            `<h2>Click the link below to verify your email</h2>
+            <a href="${process.env.HOST}:${process.env.PORT}/api/auth/verify-email?token=${user.verificationToken}">${process.env.HOST}:${process.env.PORT}/api/auth/verify-email?token=${user.verificationToken}</a>
+            <p>This link expires in ${Math.floor(process.env.VERIFICATION_TOKEN_TTL / 60)} minute${Math.floor(process.env.VERIFICATION_TOKEN_TTL / 60) > 1 ? 's' : ''}.</p>`
         );
 
         return res.json({
@@ -80,30 +81,54 @@ const RegisterHandler = async (req, res) => {
     }
 };
 
-const GenerateVerificationToken = () => {
-    const token = crypto.randomBytes(32).toString('hex');
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-    return hashedToken;
+
+/**
+ * Handles verifying emails for users. The params mentioned are query params.
+ * @param {string} token - Verification token provided to the user.
+ */
+const VerificationHandler = async (req, res) => {
+
+    const { token } = req.query;
+
+    try
+    {
+        const user = await User.findOne({ verificationToken: token });
+
+        if(!user)
+            return res.status(400).json({
+                success: false,
+                message: "Invalid token!"
+            });
+
+        if(user.tokenExpiresAt < Date.now())
+            return res.status(400).json({
+                success: false,
+                message: "Token expired!"
+            });
+
+        if(user.isVerified)
+            return res.status(400).json({
+                success: false,
+                message: "User is already verified!"
+            });
+        
+        user.isVerified = true;
+        user.tokenExpiresAt = null;
+        user.verificationToken= null;
+        await user.save();
+
+        return res.json({
+            success: true,
+            message: "Email verified successfully. You can login now."
+        });
+    }
+    catch(err)
+    {
+        res.status(500).json({
+            success: false,
+            message: JSON.stringify(err)
+        });
+    }
 };
 
-const SendMail = async (email, mailSubject, mailMessage) => {
-
-    const transporter = nodemailer.createTransport({
-        service: 'Gmail',
-        auth: {
-            user: process.env.USER_EMAIL,
-            pass: process.env.USER_PASSWORD
-        }
-    });
-
-    const mailOptions = {
-        from: process.env.USER_EMAIL,
-        to: email,
-        subject: mailSubject,
-        html: mailMessage
-    };
-
-    await transporter.sendMail(mailOptions);
-};
-
-export { RegisterHandler };
+export { RegisterHandler, VerificationHandler };
