@@ -18,4 +18,22 @@ const LoginRequestLimiter = rateLimit({
     }
 });
 
-export { RegisterRequestLimiter, LoginRequestLimiter };
+const RefreshRequestLimiter = rateLimit({
+    windowMs: process.env.REFRESH_REQUEST_WINDOW_MS * 1000,
+    max: 1,
+    message: {
+        success: false,
+        message: "Too many requests, please try again later."
+    }
+});
+
+const ProfileRequestLimiter = rateLimit({
+    windowMs: process.env.PROFILE_REQUEST_WINDOW_MS * 1000,
+    max: 1,
+    message: {
+        success: false,
+        message: "Too many requests, please try again later."
+    }
+});
+
+export { RegisterRequestLimiter, LoginRequestLimiter, RefreshRequestLimiter, ProfileRequestLimiter };

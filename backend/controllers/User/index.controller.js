@@ -1,3 +1,11 @@
+/**
+ * TODO
+ * 
+ * Hash the refresh tokens
+ * 
+ */
+
+
 import { compare, hash } from 'bcrypt';
 import User from '../../models/User/index.js';
 import SendMail from '../../utils/SendMail/index.js';
@@ -176,14 +184,14 @@ const LoginHandler = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "Strict",
-            maxAge: process.env.ACCESS_TOKEN_TTL * 60 * 1000
+            maxAge: Number(process.env.ACCESS_TOKEN_TTL) * 60 * 1000
         });
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: true,
             sameSite: "Strict",
-            maxAge: process.env.REFRESH_TOKEN_TTL * 24 * 60 * 60 * 1000
+            maxAge: Number(process.env.REFRESH_TOKEN_TTL) * 24 * 60 * 60 * 1000
         });
 
         return res.json({
@@ -201,4 +209,117 @@ const LoginHandler = async (req, res) => {
     }
 };
 
-export { RegisterHandler, VerificationHandler, LoginHandler };
+const ProfileHandler = async (req, res) => {
+
+    const projection = {
+        username: 1,
+        email: 1,
+        profilePicture: 1,
+        rating: 1,
+        problemsSolved: 1,
+        submissionHistory: 1,
+        createdAt: 1
+    };
+
+    try
+    {
+        const user = await User.findById(req.user.userId, projection);
+        if(!user)
+            return res.status(400).json({
+                success: false,
+                message: "User not found!"
+            });
+        
+        return res.json({
+            success: true,
+            message: "User found!",
+            user
+        });
+    }
+    catch(err)
+    {
+        res.status(500).json({
+            success: false,
+            message: JSON.stringify(err)
+        });
+    }
+};
+
+const RefreshHandler = async (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+
+    if(!refreshToken)
+        return res.status(400).json({
+            success: false,
+            message: "No token provided!"
+        });
+    
+    try
+    {
+        const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+        const user = await User.findById(decoded.userId);
+        if(!user || user.refreshToken !== refreshToken)
+            return res.status(400).json({
+                success: false,
+                message: "Invalid token!"
+            });
+
+        const accessToken = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_ACCESS_SECRET,
+            { expiresIn: `${process.env.ACCESS_TOKEN_TTL}m`}
+        );
+
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            maxAge: Number(process.env.ACCESS_TOKEN_TTL) * 60 * 1000
+        });
+
+        return res.json({
+            success: true,
+            message: "New access token issued successfully!",
+            accessToken
+        });
+    }
+    catch(err)
+    {
+        res.status(500).json({
+            success: false,
+            message: JSON.stringify(err)
+        });
+    }
+};
+
+const LogoutHandler = async (req, res) => {
+    try
+    {
+        const refreshToken = req.cookies.refreshToken;
+
+        if(!refreshToken)
+            return res.json({
+                success: true,
+                message: "User logged out successfully!"
+            });
+
+        await User.updateOne({ refreshToken }, { $unset: { refreshToken: "" } });
+
+        res.clearCookie("accessToken");
+        res.clearCookie("refreshToken");
+
+        return res.json({
+            success: true,
+            message: "User logged out successfully!"
+        });
+    }
+    catch(err)
+    {
+        res.status(500).json({
+            success: false,
+            message: JSON.stringify(err)
+        });
+    }
+};
+
+export { RegisterHandler, VerificationHandler, LoginHandler, ProfileHandler, RefreshHandler, LogoutHandler };
