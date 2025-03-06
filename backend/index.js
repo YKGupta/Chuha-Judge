@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import './database/connect.js';
 import UserRouter from './routers/User/index.js';
 import Logger from './middlewares/Logger/index.js';
@@ -8,6 +9,7 @@ const app = express();
 
 app.set('trust proxy', 'loopback');
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(Logger);
 
