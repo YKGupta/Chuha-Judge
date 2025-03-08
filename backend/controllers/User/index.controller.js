@@ -1,12 +1,5 @@
-/**
- * TODO
- * 
- * Hash the refresh tokens
- * 
- */
-
-
 import { compare, hash } from 'bcrypt';
+import crypto from 'crypto';
 import User from '../../models/User/index.js';
 import SendMail from '../../utils/SendMail/index.js';
 import GenerateToken from '../../utils/GenerateToken/index.js';
@@ -177,7 +170,7 @@ const LoginHandler = async (req, res) => {
             { expiresIn: `${process.env.REFRESH_TOKEN_TTL}d`}
         );
 
-        user.refreshToken = refreshToken;
+        user.refreshToken = HashToken(refreshToken);
         await user.save();
 
         res.cookie("accessToken", accessToken, {
@@ -249,7 +242,7 @@ const RefreshHandler = async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
 
     if(!refreshToken)
-        return res.status(400).json({
+        return res.status(401).json({
             success: false,
             message: "No token provided!"
         });
@@ -258,8 +251,8 @@ const RefreshHandler = async (req, res) => {
     {
         const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
         const user = await User.findById(decoded.userId);
-        if(!user || user.refreshToken !== refreshToken)
-            return res.status(400).json({
+        if(!user || user.refreshToken !== HashToken(refreshToken))
+            return res.status(401).json({
                 success: false,
                 message: "Invalid token!"
             });
@@ -303,7 +296,7 @@ const LogoutHandler = async (req, res) => {
                 message: "User logged out successfully!"
             });
 
-        await User.updateOne({ refreshToken }, { $unset: { refreshToken: "" } });
+        await User.updateOne({ refreshToken: HashToken(refreshToken) }, { $unset: { refreshToken: "" } });
 
         res.clearCookie("accessToken");
         res.clearCookie("refreshToken");
@@ -320,6 +313,10 @@ const LogoutHandler = async (req, res) => {
             message: JSON.stringify(err)
         });
     }
+};
+
+const HashToken = (token) => {
+    return crypto.createHash("sha256").update(token).digest("hex");
 };
 
 export { RegisterHandler, VerificationHandler, LoginHandler, ProfileHandler, RefreshHandler, LogoutHandler };
