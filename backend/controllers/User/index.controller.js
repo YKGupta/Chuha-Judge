@@ -1,3 +1,7 @@
+/*
+    TODO: Decide on what to do for different sessions of user
+*/
+
 import { compare, hash } from 'bcrypt';
 import crypto from 'crypto';
 import User from '../../models/User/index.js';
@@ -202,6 +206,10 @@ const LoginHandler = async (req, res) => {
     }
 };
 
+/**
+ * Returns the profile of the user specified in the cookie.
+ * @param {string} req.user.userID - ID of the user.
+ */
 const ProfileHandler = async (req, res) => {
 
     const projection = {
@@ -238,6 +246,10 @@ const ProfileHandler = async (req, res) => {
     }
 };
 
+/**
+ * Handles refreshing the access token of the client based on the refresh token in the cookie.
+ * @param {string} req.cookie.refreshToken - Refresh token of the user.
+ */
 const RefreshHandler = async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
 
@@ -285,6 +297,10 @@ const RefreshHandler = async (req, res) => {
     }
 };
 
+/**
+ * Handles logging out users.
+ * @param {string} req.cookie.refreshToken - Refresh token of the user.
+ */
 const LogoutHandler = async (req, res) => {
     try
     {
@@ -315,8 +331,131 @@ const LogoutHandler = async (req, res) => {
     }
 };
 
+/**
+ * Handles redirecting the user to google login screen.
+ */
+const GoogleRedirectHandler = (req, res) => {
+
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.GOOGLE_REDIRECT_URI}&response_type=code&scope=${encodeURIComponent('https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile')}`;
+
+    return res.redirect(url);
+};
+
+/**
+ * Handles Google OAuth's callback
+ */
+const GoogleCallbackHandler = async (req, res) => {
+
+    const { error, code } = req.query;
+
+    if(error)
+        return res.status(401).json({
+            success: false,
+            message: "User did not consent to provide the information."
+        });
+    
+    try
+    {
+        const { access_token, error } = await (await fetch('https://oauth2.googleapis.com/token', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `code=${code}&client_id=${process.env.GOOGLE_CLIENT_ID}&client_secret=${process.env.GOOGLE_CLIENT_SECRET}&grant_type=authorization_code&redirect_uri=${process.env.GOOGLE_REDIRECT_URI}`
+        })).json();
+
+        if(error)
+            return res.status(401).json({
+                success: false,
+                message: "Exchange Failed!"
+            });
+
+        const data = await (await fetch(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${access_token}`)).json();
+
+        if(data.error)
+            return res.json({
+                success: false,
+                messaage: "Invalid token!"
+            });
+        
+        const { id, name, email, picture } = data;
+
+        let user = await User.findOne({ email });
+
+        if(!user)
+        {
+            user = new User({
+                username: name,
+                email,
+                isVerified: true,
+                oauthProvider: [{
+                    provider: "google",
+                    oauthId: id
+                }],
+                profilePicture: picture
+            });
+
+            await user.save();
+        }
+        else if(!user.oauthProvider.some((val) => val.provider === "google"))
+        {
+            user.oauthProvider.push({
+                provider: "google",
+                oauthId: id
+            });
+
+            await user.save();
+        }
+
+        const accessToken = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_ACCESS_SECRET,
+            { expiresIn: `${process.env.ACCESS_TOKEN_TTL}m`}
+        );
+
+        const refreshToken = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_REFRESH_SECRET,
+            { expiresIn: `${process.env.REFRESH_TOKEN_TTL}d`}
+        );
+
+        user.refreshToken = HashToken(refreshToken);
+        await user.save();
+
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            maxAge: Number(process.env.ACCESS_TOKEN_TTL) * 60 * 1000
+        });
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            maxAge: Number(process.env.REFRESH_TOKEN_TTL) * 24 * 60 * 60 * 1000
+        });
+
+        return res.json({
+            success: true,
+            message: "User logged in successfully!",
+            accessToken
+        });
+    }
+    catch(err)
+    {
+        res.status(500).json({
+            success: false,
+            message: JSON.stringify(err)
+        });
+    }
+};
+
+/**
+ * Handles generating a hashed version of the input. Uses SHA-256.
+ */
 const HashToken = (token) => {
     return crypto.createHash("sha256").update(token).digest("hex");
 };
 
-export { RegisterHandler, VerificationHandler, LoginHandler, ProfileHandler, RefreshHandler, LogoutHandler };
+export { RegisterHandler, VerificationHandler, LoginHandler, ProfileHandler, RefreshHandler, LogoutHandler, GoogleCallbackHandler, GoogleRedirectHandler };

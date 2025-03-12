@@ -31,16 +31,19 @@ const UserSchema = Schema({
     refreshToken: {
         type: String
     },
-    oauthProvider: {
-        type: String,
-        enum: [ "google", "github", null ],
-        default: null
-    },
-    oauthId: {
-        type: String,
-        sparse: true,
-        unique: true
-    },
+    oauthProvider: [
+        {
+            provider: {
+                type: String,
+                enum: [ "google", "github", null ]
+            },
+            oauthId: {
+                type: String,
+                sparse: true,
+                unique: true
+            }
+        }
+    ],
     profilePicture: {
         type: String,
         default: ""
