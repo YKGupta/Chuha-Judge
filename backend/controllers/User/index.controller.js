@@ -356,7 +356,7 @@ const GoogleCallbackHandler = async (req, res) => {
     
     try
     {
-        const { access_token, error } = await (await fetch('https://oauth2.googleapis.com/token', {
+        const { access_token } = await (await fetch('https://oauth2.googleapis.com/token', {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -364,7 +364,7 @@ const GoogleCallbackHandler = async (req, res) => {
             body: `code=${code}&client_id=${process.env.GOOGLE_CLIENT_ID}&client_secret=${process.env.GOOGLE_CLIENT_SECRET}&grant_type=authorization_code&redirect_uri=${process.env.GOOGLE_REDIRECT_URI}`
         })).json();
 
-        if(error)
+        if(!access_token)
             return res.status(401).json({
                 success: false,
                 message: "Exchange Failed!"
@@ -452,10 +452,138 @@ const GoogleCallbackHandler = async (req, res) => {
 };
 
 /**
+ * Handles redirecting the user to GitHub login screen.
+ */
+const GithubRedirectHandler = (req, res) => {
+
+    const url = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=${process.env.GITHUB_REDIRECT_URI}&response_type=code&scope=${encodeURIComponent('user')}`;
+
+    return res.redirect(url);
+};
+
+/**
+ * Handles GitHub OAuth's callback
+ */
+const GithubCallbackHandler = async (req, res) => {
+
+    const { error, code } = req.query;
+
+    if(error)
+        return res.status(401).json({
+            success: false,
+            message: "User did not consent to provide the information."
+        });
+    
+    try
+    {
+        const { access_token } = await (await fetch('https://github.com/login/oauth/access_token', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+                code,
+                client_id: process.env.GITHUB_CLIENT_ID,
+                client_secret: process.env.GITHUB_CLIENT_SECRET,
+                redirect_uri: process.env.GITHUB_REDIRECT_URI
+            })
+        })).json();
+
+        if(!access_token)
+            return res.status(401).json({
+                success: false,
+                message: "Exchange Failed!"
+            });
+
+        const { name, avatar_url , id } = await (await fetch(`https://api.github.com/user`, {
+            headers: {
+                "Authorization": `Bearer ${access_token}`
+            }
+        })).json();
+
+        const [ { email } ] = await (await fetch(`https://api.github.com/user/emails`, {
+            headers: {
+                "Authorization": `Bearer ${access_token}`
+            }
+        })).json();
+
+        let user = await User.findOne({ email });
+
+        if(!user)
+        {
+            user = new User({
+                username: name,
+                email,
+                isVerified: true,
+                oauthProvider: [{
+                    provider: "github",
+                    oauthId: id
+                }],
+                profilePicture: avatar_url
+            });
+
+            await user.save();
+        }
+        else if(!user.oauthProvider.some((val) => val.provider === "github"))
+        {
+            user.oauthProvider.push({
+                provider: "github",
+                oauthId: id
+            });
+
+            await user.save();
+        }
+
+        const accessToken = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_ACCESS_SECRET,
+            { expiresIn: `${process.env.ACCESS_TOKEN_TTL}m`}
+        );
+
+        const refreshToken = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_REFRESH_SECRET,
+            { expiresIn: `${process.env.REFRESH_TOKEN_TTL}d`}
+        );
+
+        user.refreshToken = HashToken(refreshToken);
+        await user.save();
+
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            maxAge: Number(process.env.ACCESS_TOKEN_TTL) * 60 * 1000
+        });
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            maxAge: Number(process.env.REFRESH_TOKEN_TTL) * 24 * 60 * 60 * 1000
+        });
+
+        return res.json({
+            success: true,
+            message: "User logged in successfully!",
+            accessToken
+        });
+    }
+    catch(err)
+    {
+        res.status(500).json({
+            success: false,
+            message: JSON.stringify(err)
+        });
+    }
+};
+
+/**
  * Handles generating a hashed version of the input. Uses SHA-256.
  */
 const HashToken = (token) => {
     return crypto.createHash("sha256").update(token).digest("hex");
 };
 
-export { RegisterHandler, VerificationHandler, LoginHandler, ProfileHandler, RefreshHandler, LogoutHandler, GoogleCallbackHandler, GoogleRedirectHandler };
+export { RegisterHandler, VerificationHandler, LoginHandler, ProfileHandler, RefreshHandler, LogoutHandler, GoogleCallbackHandler, GoogleRedirectHandler, GithubRedirectHandler, GithubCallbackHandler };
