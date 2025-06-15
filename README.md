@@ -59,8 +59,6 @@ We welcome contributors interested in:
 
 MIT – free to use and modify for learning and educational purposes.
 
----
-
 ## 🙌 Acknowledgements
 
 Inspired by platforms like HackerRank, LeetCode, and Codeforces — but built from scratch to be modular, open, and extensible.
