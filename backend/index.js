@@ -3,6 +3,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import './database/connect.js';
 import UserRouter from './routers/User/index.js';
+import RunnerRouter from './routers/Runner/index.js';
 import Logger from './middlewares/Logger/index.js';
 
 const app = express();
@@ -14,6 +15,7 @@ app.use(cookieParser());
 app.use(Logger);
 
 app.use('/api/auth', UserRouter);
+app.use('/api/runner', RunnerRouter);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on ${process.env.HOST}:${process.env.PORT}`);
