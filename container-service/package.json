@@ -1,0 +1,18 @@
+{
+  "name": "container-service",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dockerode": "^4.0.8",
+    "express": "^5.1.0",
+    "tar-stream": "^3.1.7",
+    "uuid": "^13.0.0"
+  }
+}

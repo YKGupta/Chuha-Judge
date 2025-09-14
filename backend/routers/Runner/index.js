@@ -7,6 +7,8 @@ function normalize(s) {
     return s.replace(/\r\n/g, '\n').trim();
 }
 
+const CONTAINER_SERVICE_URL = "http://localhost:5000/run";
+
 RunnerRouter.post('/submit', async (req, res) => {
     try {
         const { code, language, input = '', expectedOutput = '' } = req.body;
@@ -18,7 +20,7 @@ RunnerRouter.post('/submit', async (req, res) => {
             body: JSON.stringify({ code, language, input }),
             headers: { 'Content-Type': 'application/json' }
         });
-        const { stdout, stderr, exitCode } = r.data;
+        const { stdout, stderr, exitCode } = await r.json();
 
         // simple comparator (trim + normalize newlines)
         const verdict = (exitCode !== 0)
