@@ -4,6 +4,6 @@ import { GetProblemsHandler, GetProblemHandler } from "../../controllers/Problem
 const ProblemsRouter = Router();
 
 ProblemsRouter.get('/', GetProblemsHandler);
-ProblemsRouter.get('/:problemId', GetProblemHandler);
+ProblemsRouter.get('/:slug', GetProblemHandler);
 
 export default ProblemsRouter;
