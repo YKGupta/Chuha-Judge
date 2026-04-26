@@ -1,5 +1,5 @@
-import Problem from "../../models/Problem";
-import Testcase from "../../models/Testcase";
+import Problem from "../../models/Problem/index.js";
+import Testcase from "../../models/Testcase/index.js";
 
 const GetProblemsHandler = async (req, res) => {
     try
