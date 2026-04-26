@@ -24,6 +24,6 @@ const TestcaseSchema = Schema({
 
 TestcaseSchema.index({ problemId: 1, isSample: 1 });
 
-const TestcaseModel = model("Testcase", TestcaseSchema, "Testcases");
+const Testcase = model("Testcase", TestcaseSchema, "Testcases");
 
-export default TestcaseModel;
+export default Testcase;

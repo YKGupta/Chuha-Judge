@@ -49,6 +49,6 @@ SubmissionSchema.index({ userId: 1, problemId: 1 });
 SubmissionSchema.index({ status: 1 });
 SubmissionSchema.index({ userId: 1, createdAt: -1 });
 
-const SubmissionModel = model("Submission", SubmissionSchema, "Submissions");
+const Submission = model("Submission", SubmissionSchema, "Submissions");
 
-export default SubmissionModel;
+export default Submission;
