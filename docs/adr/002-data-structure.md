@@ -30,12 +30,15 @@ Testcases are stored separately and linked via `problemId`.
   "_id": "...",
   "title": "...",
   "slug": "...",
-  "difficulty": "...",
+  "difficulty": "easy | medium | hard",
   "description": "...",
+  "constraints": "...",
   "limits": {
     "time": 1000,
     "memory": 256
-  }
+  },
+  "createdAt": "...",
+  "updatedAt": "..."
 }
 ```
 
@@ -47,7 +50,9 @@ Testcases are stored separately and linked via `problemId`.
   "problemId": "...",
   "input": "...",
   "output": "...",
-  "isSample": true
+  "isSample": true,
+  "createdAt": "...",
+  "updatedAt": "..."
 }
 ```
 
@@ -59,9 +64,14 @@ Testcases are stored separately and linked via `problemId`.
   "userId": "...",
   "problemId": "...",
   "code": "...",
-  "language": "...",
-  "status": "pending",
-  "createdAt": "..."
+  "language": "java | python",
+  "status": "pending | running | accepted | wrong_answer | time_limit_exceeded | runtime_error | compilation_error",
+  "execution": {
+    "time": 120,
+    "memory": 64
+  },
+  "createdAt": "...",
+  "updatedAt": "..."
 }
 ```
 
