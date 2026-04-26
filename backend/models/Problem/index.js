@@ -41,8 +41,6 @@ const ProblemSchema = Schema({
     timestamps: true
 });
 
-ProblemSchema.index({ slug: 1 });
-
 const Problem = model("Problem", ProblemSchema, "Problems");
 
 export default Problem;
