@@ -1,6 +1,10 @@
 import rateLimit from 'express-rate-limit';
 
-const RegisterRequestLimiter = rateLimit({
+const isDev = process.env.NODE_ENV === "development";
+
+const NoOpMiddleware = (req, res, next) => next();
+
+const RegisterRequestLimiter = isDev ? NoOpMiddleware : rateLimit({
     windowMs: process.env.REGISTER_REQUEST_WINDOW_MS * 1000,
     max: 1,
     message: {
@@ -9,7 +13,7 @@ const RegisterRequestLimiter = rateLimit({
     }
 });
 
-const LoginRequestLimiter = rateLimit({
+const LoginRequestLimiter = isDev ? NoOpMiddleware : rateLimit({
     windowMs: process.env.LOGIN_REQUEST_WINDOW_MS * 1000,
     max: 1,
     message: {
@@ -18,7 +22,7 @@ const LoginRequestLimiter = rateLimit({
     }
 });
 
-const RefreshRequestLimiter = rateLimit({
+const RefreshRequestLimiter = isDev ? NoOpMiddleware : rateLimit({
     windowMs: process.env.REFRESH_REQUEST_WINDOW_MS * 1000,
     max: 1,
     message: {
@@ -27,7 +31,7 @@ const RefreshRequestLimiter = rateLimit({
     }
 });
 
-const ProfileRequestLimiter = rateLimit({
+const ProfileRequestLimiter = isDev ? NoOpMiddleware : rateLimit({
     windowMs: process.env.PROFILE_REQUEST_WINDOW_MS * 1000,
     max: 1,
     message: {
