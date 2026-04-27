@@ -9,6 +9,8 @@ import SendMail from '../../utils/SendMail/index.js';
 import GenerateToken from '../../utils/GenerateToken/index.js';
 import jwt from 'jsonwebtoken';
 
+const isDev = process.env.NODE_ENV === "development";
+
 /**
  * Handles signing up new users. The params mentioned are request body.
  * @param {string} username - Name of the user.
@@ -66,7 +68,7 @@ const RegisterHandler = async (req, res) => {
         await user.save();
 
         // Send a verification mail
-        SendMail(email, 
+        SendMail(isDev ? process.env.ADMIN_EMAIL : email, 
             `Verify your email for Chuha Judge`, 
             `<h2>Click the link below to verify your email</h2>
             <a href="${process.env.HOST}:${process.env.PORT}/api/auth/verify-email?token=${user.verificationToken}">${process.env.HOST}:${process.env.PORT}/api/auth/verify-email?token=${user.verificationToken}</a>
@@ -179,14 +181,14 @@ const LoginHandler = async (req, res) => {
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "Strict",
             maxAge: Number(process.env.ACCESS_TOKEN_TTL) * 60 * 1000
         });
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "Strict",
             maxAge: Number(process.env.REFRESH_TOKEN_TTL) * 24 * 60 * 60 * 1000
         });
@@ -277,7 +279,7 @@ const RefreshHandler = async (req, res) => {
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "Strict",
             maxAge: Number(process.env.ACCESS_TOKEN_TTL) * 60 * 1000
         });
@@ -424,14 +426,14 @@ const GoogleCallbackHandler = async (req, res) => {
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "Strict",
             maxAge: Number(process.env.ACCESS_TOKEN_TTL) * 60 * 1000
         });
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "Strict",
             maxAge: Number(process.env.REFRESH_TOKEN_TTL) * 24 * 60 * 60 * 1000
         });
@@ -552,14 +554,14 @@ const GithubCallbackHandler = async (req, res) => {
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "Strict",
             maxAge: Number(process.env.ACCESS_TOKEN_TTL) * 60 * 1000
         });
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "Strict",
             maxAge: Number(process.env.REFRESH_TOKEN_TTL) * 24 * 60 * 60 * 1000
         });
