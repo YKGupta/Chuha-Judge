@@ -1,9 +1,14 @@
 import { Router } from "express";
-import { GetProblemsHandler, GetProblemHandler } from "../../controllers/Problems/index.controller.js";
+import { GetProblemsHandler, GetProblemHandler, CreateProblemHandler, UpdateProblemHandler, DeleteProblemHandler } from "../../controllers/Problems/index.controller.js";
+import AuthMiddleware from '../../middlewares/Auth/index.js';
+import AdminMiddleware from "../../middlewares/Admin/index.js";
 
 const ProblemsRouter = Router();
 
 ProblemsRouter.get('/', GetProblemsHandler);
 ProblemsRouter.get('/:slug', GetProblemHandler);
+ProblemsRouter.post('/', AuthMiddleware, AdminMiddleware, CreateProblemHandler);
+ProblemsRouter.patch('/:slug', AuthMiddleware, AdminMiddleware, UpdateProblemHandler);
+ProblemsRouter.delete('/:slug', AuthMiddleware, AdminMiddleware, DeleteProblemHandler);
 
 export default ProblemsRouter;
