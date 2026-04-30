@@ -5,6 +5,7 @@ import './database/connect.js';
 import UserRouter from './routers/User/index.js';
 import ProblemsRouter from './routers/Problems/index.js';
 import Logger from './middlewares/Logger/index.js';
+import TestcasesRouter from './routers/Testcases/index.js';
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(Logger);
 
 app.use('/api/auth', UserRouter);
 app.use('/api/problems', ProblemsRouter);
+app.use('/api/testcases', TestcasesRouter);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on ${process.env.HOST}:${process.env.PORT}`);
