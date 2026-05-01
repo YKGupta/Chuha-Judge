@@ -5,8 +5,6 @@ import AdminMiddleware from "../../middlewares/Admin/index.js";
 
 const TestcasesRouter = Router();
 
-TestcasesRouter.get('/:slug', AuthMiddleware, AdminMiddleware, GetTestcasesForProblemHandler);
-TestcasesRouter.post('/:slug', AuthMiddleware, AdminMiddleware, CreateTestcaseHandler);
 TestcasesRouter.patch('/:testcaseId', AuthMiddleware, AdminMiddleware, UpdateTestcaseHandler);
 TestcasesRouter.delete('/:testcaseId', AuthMiddleware, AdminMiddleware, DeleteTestcaseHandler);
 
