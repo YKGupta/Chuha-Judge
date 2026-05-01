@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import Submission from "../../models/Submission/index.js";
 
 const GetSubmissions = async (req, res) => {
@@ -35,7 +36,7 @@ const CreateSubmission = async (req, res) => {
     {
         const { problemId, code, language } = req.body;
 
-        if(!problemId || !code || !langugage)
+        if(!problemId || !code || !language)
             return res.status(400).json({
                 success: false,
                 data: null,

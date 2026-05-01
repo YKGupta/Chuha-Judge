@@ -1,5 +1,5 @@
 import { Router } from "express";
-import AuthMiddleware from "../../middlewares/Auth";
+import AuthMiddleware from "../../middlewares/Auth/index.js";
 import { CreateSubmission, GetSubmissions } from "../../controllers/Submissions/index.controller.js";
 
 const SubmissionsRouter = Router();
