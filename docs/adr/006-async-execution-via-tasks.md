@@ -1,4 +1,4 @@
-# ADR-004: Asynchronous Execution via Cloud Tasks (Push-Based Task Queue)
+# ADR-006: Asynchronous Execution via Cloud Tasks (Push-Based Task Queue)
 
 ## Status
 
