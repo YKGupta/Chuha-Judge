@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import Submission from "../../models/Submission/index.js";
+import EnqueueSubmission from "../../utils/EnqueueSubmission/index.js";
 
 const GetSubmissions = async (req, res) => {
     try
@@ -64,7 +65,7 @@ const CreateSubmission = async (req, res) => {
         });
         await submission.save();
 
-        // TODO: publish submission to Pub/Sub
+        await EnqueueSubmission(submission._id);
 
         return res.json({
             success: true,
