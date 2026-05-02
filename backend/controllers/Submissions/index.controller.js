@@ -48,6 +48,17 @@ const GetSubmissionById = async (req, res) => {
 
         const submission = await Submission.findById(submissionId).lean();
 
+        if(!submission)
+            return res.status(404).json({
+                success: false,
+                data: null,
+                error: {
+                    message: "Submission not found",
+                    code: "SUBMISSION_NOT_FOUND"
+
+                }
+            });
+
         return res.json({
             success: true,
             data: {
