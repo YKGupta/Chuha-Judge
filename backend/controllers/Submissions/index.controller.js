@@ -32,6 +32,60 @@ const GetSubmissions = async (req, res) => {
     }
 };
 
+const GetSubmissionById = async (req, res) => {
+    try
+    {
+        const submissionId = req.params.submissionId;
+        if(!Types.ObjectId.isValid(submissionId))
+            return res.status(400).json({
+                success: false,
+                data: null,
+                error: {
+                    message: "Invalid submission ID",
+                    code: "INVALID_SUBMISSION_ID"
+                }
+            });
+
+        const submission = await Submission.findById(submissionId).lean();
+
+        if(!submission)
+            return res.status(404).json({
+                success: false,
+                data: null,
+                error: {
+                    message: "Submission not found",
+                    code: "SUBMISSION_NOT_FOUND"
+
+                }
+            });
+
+        return res.json({
+            success: true,
+            data: {
+                id: submission._id,
+                problemId: submission.problemId,
+                code: submission.code,
+                language: submission.language,
+                status: submission.status,
+                execution: submission.execution,
+                createdAt: submission.createdAt
+            },
+            error: null
+        });
+    }
+    catch(e)
+    {
+        return res.status(500).json({
+            success: false,
+            data: null,
+            error: {
+                message: e.message || "Internal Server Error",
+                code: "INTERNAL_SERVER_ERROR"
+            }
+        });
+    }
+};
+
 const CreateSubmission = async (req, res) => {
     try
     {
@@ -88,4 +142,4 @@ const CreateSubmission = async (req, res) => {
     }
 };
 
-export { GetSubmissions, CreateSubmission };
+export { GetSubmissions, GetSubmissionById, CreateSubmission };
