@@ -87,6 +87,9 @@ const GetSubmissionById = async (req, res) => {
 };
 
 const CreateSubmission = async (req, res) => {
+
+    let submissionId = null;
+
     try
     {
         const { problemId, code, language } = req.body;
@@ -119,18 +122,23 @@ const CreateSubmission = async (req, res) => {
         });
         await submission.save();
 
-        await EnqueueSubmission(submission._id);
+        submissionId = submission._id;
+
+        await EnqueueSubmission(submissionId);
 
         return res.json({
             success: true,
             data: {
-                submissionId: submission._id
+                submissionId
             },
             error: null
         });
     }
     catch(e)
     {
+        if(submissionId)
+            await Submission.findByIdAndDelete(submissionId).catch(() => {});
+
         return res.status(500).json({
             success: false,
             data: null,
