@@ -68,6 +68,7 @@ const GetSubmissionById = async (req, res) => {
                 language: submission.language,
                 status: submission.status,
                 execution: submission.execution,
+                failedTestcase: submission.failedTestcase,
                 createdAt: submission.createdAt
             },
             error: null

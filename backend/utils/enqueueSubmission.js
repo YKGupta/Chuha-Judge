@@ -22,26 +22,14 @@ const InvokeExecutionService = async (submissionId) => {
     {
         const executionUrl = process.env.EXECUTION_SERVICE_URL;
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 5000);
-
-        const r = await fetch(executionUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                submissionId
-            }),
-            signal: controller.signal
+        const r = await fetch(`${executionUrl}/${submissionId}`, {
+            method: "POST"
         });
         
         const response = await r.json();
 
         if(!r.ok)
             throw new Error(response?.error?.message || "Execution failed");
-
-        clearTimeout(timeout);
 
         return ({
             success: true,

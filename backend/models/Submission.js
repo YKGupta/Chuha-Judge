@@ -1,5 +1,20 @@
 import { model, Schema } from "mongoose";
 
+const FailedTestcaseSchema = Schema({
+    input: {
+        type: String
+    },
+    expectedOutput: {
+        type: String
+    },
+    actualOutput: {
+        type: String
+    },
+    stderr: {
+        type: String
+    }
+});
+
 const SubmissionSchema = Schema({
     userId: {
         type: Schema.Types.ObjectId,
@@ -42,12 +57,7 @@ const SubmissionSchema = Schema({
         }
     },
     failedTestcase: {
-        type: {
-            input: String,
-            expectedOutput: String,
-            actualOutput: String,
-            stderr: String
-        },
+        type: FailedTestcaseSchema,
         default: null
     }
 }, {
