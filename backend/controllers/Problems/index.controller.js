@@ -180,8 +180,23 @@ const UpdateProblemHandler = async (req, res) => {
                     code: "PROBLEM_NOT_FOUND"
                 }
             });
-            
-        Object.assign(problem, req.body);
+        
+        const allowedUpdates = [
+            "title",
+            "slug",
+            "difficulty",
+            "description",
+            "constraints",
+            "limits"
+        ];
+        
+        for(const key of allowedUpdates)
+        {
+            if(req.body[key] === undefined)
+                continue;
+            problem[key] = req.body[key];
+        }
+
         await problem.save();
 
         return res.json({

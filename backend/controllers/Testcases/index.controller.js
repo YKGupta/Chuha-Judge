@@ -166,8 +166,21 @@ const UpdateTestcaseHandler = async (req, res) => {
 
                 }
             });
+        
+        const allowedUpdates = [
+            "problemId",
+            "input",
+            "output",
+            "isSample"
+        ];
+        
+        for(const key of allowedUpdates)
+        {
+            if(req.body[key] === undefined)
+                continue;
+            testcase[key] = req.body[key];
+        }
 
-        Object.assign(testcase, req.body);
         await testcase.save();
 
         return res.json({
