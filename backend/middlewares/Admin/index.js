@@ -15,7 +15,7 @@ const AdminMiddleware = async (req, res, next) => {
                 }
             });
 
-        if(user.email !== process.env.ADMIN_EMAIL)
+        if(user.role !== "admin")
             return res.status(403).json({
                 success: false,
                 data: null,

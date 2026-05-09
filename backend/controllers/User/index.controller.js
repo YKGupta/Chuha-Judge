@@ -34,7 +34,7 @@ const RegisterHandler = async (req, res) => {
         
         // Either the user is new, or a user who might want to verify himself
         
-        if(user && user.lastVerificationEmailSent && user.lastVerificationEmailSent >= Date.now() - process.env.VERIFICATION_WINDOW_TTL * 1000)
+        if(!isDev && user && user.lastVerificationEmailSent && user.lastVerificationEmailSent >= Date.now() - process.env.VERIFICATION_WINDOW_TTL * 1000)
         {
             // Wait before sending a new mail
             return res.json({
@@ -68,7 +68,7 @@ const RegisterHandler = async (req, res) => {
         await user.save();
 
         // Send a verification mail
-        SendMail(isDev ? process.env.ADMIN_EMAIL : email, 
+        SendMail(isDev ? process.env.DEV_EMAIL : email, 
             `Verify your email for Chuha Judge`, 
             `<h2>Click the link below to verify your email</h2>
             <a href="${process.env.HOST}:${process.env.PORT}/api/auth/verify-email?token=${user.verificationToken}">${process.env.HOST}:${process.env.PORT}/api/auth/verify-email?token=${user.verificationToken}</a>

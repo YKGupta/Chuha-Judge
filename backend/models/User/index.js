@@ -14,6 +14,11 @@ const UserSchema = Schema({
     password: {
         type: String
     },
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user"
+    },
     verificationToken: {
         type: String,
         index: true
