@@ -70,6 +70,12 @@ Testcases are stored separately and linked via `problemId`.
     "time": 120,
     "memory": 64
   },
+  "failedTestcase": {
+    "input": "...",
+    "expectedOutput": "...",
+    "actualOutput": "...",
+    "stderr": "..."
+  }
   "createdAt": "...",
   "updatedAt": "..."
 }

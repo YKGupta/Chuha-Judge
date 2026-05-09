@@ -40,6 +40,20 @@ const SubmissionSchema = Schema({
         memory: {
             type: Number
         }
+    },
+    failedTestcase: {
+        input: {
+            type: String
+        },
+        expectedOutput: {
+            type: String
+        },
+        actualOutput: {
+            type: String
+        },
+        stderr: {
+            type: String
+        }
     }
 }, {
     timestamps: true
