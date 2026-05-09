@@ -28,7 +28,11 @@ const RegisterHandler = async (req, res) => {
         {
             return res.status(400).json({
                 success: false,
-                message: "User with this email already exists."
+                data: null,
+                error: {
+                    message: "User with this email already exists.",
+                    code: "USER_ALREADY_EXISTS"
+                }
             });
         }
         
@@ -39,7 +43,10 @@ const RegisterHandler = async (req, res) => {
             // Wait before sending a new mail
             return res.json({
                 success: true,
-                message: "Wait before requesting a new verification mail."
+                data: {
+                    message: "Wait before requesting a new verification mail."
+                },
+                error: null
             });
         }
 
@@ -68,7 +75,7 @@ const RegisterHandler = async (req, res) => {
         await user.save();
 
         // Send a verification mail
-        SendMail(isDev ? process.env.DEV_EMAIL : email, 
+        await SendMail(isDev ? process.env.DEV_EMAIL : email, 
             `Verify your email for Chuha Judge`, 
             `<h2>Click the link below to verify your email</h2>
             <a href="${process.env.HOST}:${process.env.PORT}/api/auth/verify-email?token=${user.verificationToken}">${process.env.HOST}:${process.env.PORT}/api/auth/verify-email?token=${user.verificationToken}</a>
@@ -77,14 +84,21 @@ const RegisterHandler = async (req, res) => {
 
         return res.json({
             success: true,
-            message: "User registered. Check your email for verification."
+            data: {
+                message: "User registered. Check your email for verification."
+            },
+            error: null,
         });
     }
     catch(err)
     {
         res.status(500).json({
             success: false,
-            message: JSON.stringify(err)
+            data: null,
+            error: {
+                message: err.message || "Internal Server Error",
+                code: "INTERAL_SERVER_ERROR"
+            }
         });
     }
 };
@@ -105,19 +119,30 @@ const VerificationHandler = async (req, res) => {
         if(!user)
             return res.status(400).json({
                 success: false,
-                message: "Invalid token!"
+                data: null,
+                error: {
+                    message: "Invalid token!",
+                    code: "INVALID_TOKEN"
+                }
             });
 
         if(user.tokenExpiresAt < Date.now())
             return res.status(400).json({
                 success: false,
-                message: "Token expired!"
+                data: null,
+                error: {
+                    message: "Token expired!",
+                    code: "TOKEN_EXPIRED"
+                }
             });
 
         if(user.isVerified)
-            return res.status(400).json({
-                success: false,
-                message: "User is already verified!"
+            return res.json({
+                success: true,
+                data: {
+                    message: "User is already verified"
+                },
+                error: null
             });
         
         user.isVerified = true;
@@ -127,14 +152,21 @@ const VerificationHandler = async (req, res) => {
 
         return res.json({
             success: true,
-            message: "Email verified successfully. You can login now."
+            data: {
+                message: "Email verified successfully. You can login now."
+            },
+            error: null
         });
     }
     catch(err)
     {
         res.status(500).json({
             success: false,
-            message: JSON.stringify(err)
+            data: null,
+            error: {
+                message: err.message || "Internal Server Error",
+                code: "INTERAL_SERVER_ERROR"
+            }
         });
     }
 };
@@ -154,14 +186,32 @@ const LoginHandler = async (req, res) => {
         if(!user)
             return res.status(400).json({
                 success: false,
-                message: "User not found!"
+                data: null,
+                error: {
+                    message: "User not found!",
+                    code: "USER_NOT_FOUND"
+                }
+            });
+
+        if(!user.isVerified)
+            return res.status(403).json({
+                success: false,
+                data: null,
+                error: {
+                    message: "Email not verified!",
+                    code: "EMAIL_NOT_VERIFIED"
+                }
             });
 
         const isPasswordCorrect = await compare(password, user.password);
         if(!isPasswordCorrect)
             return res.status(400).json({
                 success: false,
-                message: "Wrong password!"
+                data: null,
+                error: {
+                    message: "Wrong password!",
+                    code: "WRONG_PASSWORD"
+                }
             });
         
         const accessToken = jwt.sign(
@@ -195,15 +245,21 @@ const LoginHandler = async (req, res) => {
 
         return res.json({
             success: true,
-            message: "User logged in successfully!",
-            accessToken
+            data: {
+                message: "User logged in successfully!"
+            },
+            error: null
         });
     }
     catch(err)
     {
         res.status(500).json({
             success: false,
-            message: JSON.stringify(err)
+            data: null,
+            error: {
+                message: err.message || "Internal Server Error",
+                code: "INTERAL_SERVER_ERROR"
+            }
         });
     }
 };
@@ -230,20 +286,31 @@ const ProfileHandler = async (req, res) => {
         if(!user)
             return res.status(400).json({
                 success: false,
-                message: "User not found!"
+                data: null,
+                error: {
+                    message: "User not found!",
+                    code: "USER_NOT_FOUND"
+                }
             });
         
         return res.json({
             success: true,
-            message: "User found!",
-            user
+            data: {
+                message: "User found!",
+                user
+            },
+            error: null
         });
     }
     catch(err)
     {
         res.status(500).json({
             success: false,
-            message: JSON.stringify(err)
+            data: null,
+            error: {
+                message: err.message || "Internal Server Error",
+                code: "INTERAL_SERVER_ERROR"
+            }
         });
     }
 };
@@ -258,7 +325,11 @@ const RefreshHandler = async (req, res) => {
     if(!refreshToken)
         return res.status(401).json({
             success: false,
-            message: "No token provided!"
+            data: null,
+            error: {
+                message: "No token provided!",
+                code: "MISSING_TOKEN"
+            }
         });
     
     try
@@ -268,7 +339,11 @@ const RefreshHandler = async (req, res) => {
         if(!user || user.refreshToken !== HashToken(refreshToken))
             return res.status(401).json({
                 success: false,
-                message: "Invalid token!"
+                data: null,
+                error: {
+                    message: "Invalid token!",
+                    code: "INVALID_TOKEN"
+                }
             });
 
         const accessToken = jwt.sign(
@@ -286,15 +361,21 @@ const RefreshHandler = async (req, res) => {
 
         return res.json({
             success: true,
-            message: "New access token issued successfully!",
-            accessToken
+            data: {
+                message: "New access token issued successfully!"
+            },
+            error: null
         });
     }
     catch(err)
     {
         res.status(500).json({
             success: false,
-            message: JSON.stringify(err)
+            data: null,
+            error: {
+                message: err.message || "Internal Server Error",
+                code: "INTERAL_SERVER_ERROR"
+            }
         });
     }
 };
@@ -311,7 +392,10 @@ const LogoutHandler = async (req, res) => {
         if(!refreshToken)
             return res.json({
                 success: true,
-                message: "User logged out successfully!"
+                data: {
+                    message: "User logged out successfully!"
+                },
+                error: null
             });
 
         await User.updateOne({ refreshToken: HashToken(refreshToken) }, { $unset: { refreshToken: "" } });
@@ -321,14 +405,21 @@ const LogoutHandler = async (req, res) => {
 
         return res.json({
             success: true,
-            message: "User logged out successfully!"
+            data: {
+                message: "User logged out successfully!"
+            },
+            error: null
         });
     }
     catch(err)
     {
         res.status(500).json({
             success: false,
-            message: JSON.stringify(err)
+            data: null,
+            error: {
+                message: err.message || "Internal Server Error",
+                code: "INTERAL_SERVER_ERROR"
+            }
         });
     }
 };
@@ -353,7 +444,11 @@ const GoogleCallbackHandler = async (req, res) => {
     if(error)
         return res.status(401).json({
             success: false,
-            message: "User did not consent to provide the information."
+            data: null,
+            error: {
+                message: "User did not consent to provide the information.",
+                code: "MISSING_CONSENT"
+            }
         });
     
     try
@@ -369,7 +464,11 @@ const GoogleCallbackHandler = async (req, res) => {
         if(!access_token)
             return res.status(401).json({
                 success: false,
-                message: "Exchange Failed!"
+                data: null,
+                error: {
+                    message: "Exchange Failed!",
+                    code: "INTERNAL_SERVER_ERROR"
+                }
             });
 
         const data = await (await fetch(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${access_token}`)).json();
@@ -377,7 +476,11 @@ const GoogleCallbackHandler = async (req, res) => {
         if(data.error)
             return res.json({
                 success: false,
-                messaage: "Invalid token!"
+                data: null,
+                error: {
+                    message: "Invalid token!",
+                    code: "INTERNAL_SERVER_ERROR"
+                }
             });
         
         const { id, name, email, picture } = data;
@@ -440,15 +543,21 @@ const GoogleCallbackHandler = async (req, res) => {
 
         return res.json({
             success: true,
-            message: "User logged in successfully!",
-            accessToken
+            data: {
+                message: "User logged in successfully!"
+            },
+            error: null
         });
     }
     catch(err)
     {
         res.status(500).json({
             success: false,
-            message: JSON.stringify(err)
+            data: null,
+            error: {
+                message: err.message || "Internal Server Error",
+                code: "INTERAL_SERVER_ERROR"
+            }
         });
     }
 };
@@ -473,7 +582,11 @@ const GithubCallbackHandler = async (req, res) => {
     if(error)
         return res.status(401).json({
             success: false,
-            message: "User did not consent to provide the information."
+            data: null,
+            error: {
+                message: "User did not consent to provide the information.",
+                code: "MISSING_CONSENT"
+            }
         });
     
     try
@@ -495,7 +608,11 @@ const GithubCallbackHandler = async (req, res) => {
         if(!access_token)
             return res.status(401).json({
                 success: false,
-                message: "Exchange Failed!"
+                data: null,
+                error: {
+                    message: "Exchange Failed!",
+                    code: "INTERNAL_SERVER_ERROR"
+                }
             });
 
         const { name, avatar_url , id } = await (await fetch(`https://api.github.com/user`, {
@@ -568,15 +685,21 @@ const GithubCallbackHandler = async (req, res) => {
 
         return res.json({
             success: true,
-            message: "User logged in successfully!",
-            accessToken
+            data: {
+                message: "User logged in successfully!"
+            },
+            error: null
         });
     }
     catch(err)
     {
         res.status(500).json({
             success: false,
-            message: JSON.stringify(err)
+            data: null,
+            error: {
+                message: err.message || "Internal Server Error",
+                code: "INTERAL_SERVER_ERROR"
+            }
         });
     }
 };
