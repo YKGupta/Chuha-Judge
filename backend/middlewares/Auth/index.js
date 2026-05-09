@@ -6,7 +6,11 @@ const AuthMiddleware = async (req, res, next) => {
     if(!accessToken)
         return res.status(400).json({
             success: false,
-            message: "No token provided!"
+            data: null,
+            error: {
+                message: "No token provided!",
+                code: "MISSING_TOKEN"
+            }
         });
     
     try
@@ -19,7 +23,11 @@ const AuthMiddleware = async (req, res, next) => {
     {
         res.status(500).json({
             success: false,
-            message: JSON.stringify(err)
+            data: null,
+            error: {
+                message: err.messaage || "Internal Server Error",
+                code: "INTERAL_SERVER_ERROR"
+            }
         });
     }
 };
