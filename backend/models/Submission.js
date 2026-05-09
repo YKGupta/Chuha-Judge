@@ -42,18 +42,13 @@ const SubmissionSchema = Schema({
         }
     },
     failedTestcase: {
-        input: {
-            type: String
+        type: {
+            input: String,
+            expectedOutput: String,
+            actualOutput: String,
+            stderr: String
         },
-        expectedOutput: {
-            type: String
-        },
-        actualOutput: {
-            type: String
-        },
-        stderr: {
-            type: String
-        }
+        default: null
     }
 }, {
     timestamps: true
