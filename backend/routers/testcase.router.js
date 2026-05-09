@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { CreateTestcaseHandler, DeleteTestcaseHandler, GetTestcasesForProblemHandler, UpdateTestcaseHandler } from "../../controllers/Testcases/index.controller.js";
-import AuthMiddleware from "../../middlewares/Auth/index.js";
-import AdminMiddleware from "../../middlewares/Admin/index.js";
+import { CreateTestcaseHandler, DeleteTestcaseHandler, GetTestcasesForProblemHandler, UpdateTestcaseHandler } from "../controllers/testcase.controller.js";
+import AuthMiddleware from "../middlewares/auth.middleware.js";
+import AdminMiddleware from "../middlewares/admin.middleware.js";
 
 const TestcasesRouter = Router();
 

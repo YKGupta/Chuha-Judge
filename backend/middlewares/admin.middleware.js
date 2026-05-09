@@ -1,4 +1,4 @@
-import User from "../../models/User/index.js";
+import User from "../models/User.js";
 
 const AdminMiddleware = async (req, res, next) => {
     try

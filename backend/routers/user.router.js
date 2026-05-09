@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { LoginHandler, LogoutHandler, ProfileHandler, RefreshHandler, RegisterHandler, VerificationHandler, GoogleCallbackHandler, GoogleRedirectHandler, GithubRedirectHandler, GithubCallbackHandler } from '../../controllers/User/index.controller.js';
-import { LoginRequestLimiter, ProfileRequestLimiter, RefreshRequestLimiter, RegisterRequestLimiter } from '../../rateLimiters/User/index.js';
-import AuthMiddleware from '../../middlewares/Auth/index.js';
+import { LoginHandler, LogoutHandler, ProfileHandler, RefreshHandler, RegisterHandler, VerificationHandler, GoogleCallbackHandler, GoogleRedirectHandler, GithubRedirectHandler, GithubCallbackHandler } from '../controllers/user.controller.js'
+import { LoginRequestLimiter, ProfileRequestLimiter, RefreshRequestLimiter, RegisterRequestLimiter } from '../rateLimiters/user.rateLimiter.js';
+import AuthMiddleware from '../middlewares/auth.middleware.js';
 
 const UserRouter = Router();
 

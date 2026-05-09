@@ -1,7 +1,7 @@
 import { Router } from "express";
-import AuthMiddleware from "../../middlewares/Auth/index.js";
-import { CreateSubmission, GetSubmissionById, GetSubmissions } from "../../controllers/Submissions/index.controller.js";
-import { CreateSubmissionRequestLimiter } from "../../rateLimiters/Submissions/index.js";
+import AuthMiddleware from "../middlewares/auth.middleware.js";
+import { CreateSubmission, GetSubmissionById, GetSubmissions } from "../controllers/submission.controller.js";
+import { CreateSubmissionRequestLimiter } from "../rateLimiters/submission.rateLimiter.js";
 
 const SubmissionsRouter = Router();
 

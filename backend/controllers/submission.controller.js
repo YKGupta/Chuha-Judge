@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
-import Submission from "../../models/Submission/index.js";
-import EnqueueSubmission from "../../utils/EnqueueSubmission/index.js";
+import Submission from "../models/Submission.js";
+import EnqueueSubmission from "../utils/enqueueSubmission.js";
 
 const GetSubmissions = async (req, res) => {
     try

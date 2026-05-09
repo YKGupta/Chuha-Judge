@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { GetProblemsHandler, GetProblemHandler, CreateProblemHandler, UpdateProblemHandler, DeleteProblemHandler } from "../../controllers/Problems/index.controller.js";
-import { CreateTestcaseHandler, GetTestcasesForProblemHandler } from "../../controllers/Testcases/index.controller.js";
-import AuthMiddleware from '../../middlewares/Auth/index.js';
-import AdminMiddleware from "../../middlewares/Admin/index.js";
+import { GetProblemsHandler, GetProblemHandler, CreateProblemHandler, UpdateProblemHandler, DeleteProblemHandler } from "../controllers/problem.controller.js";
+import { CreateTestcaseHandler, GetTestcasesForProblemHandler } from "../controllers/testcase.controller.js";
+import AuthMiddleware from "../middlewares/auth.middleware.js";
+import AdminMiddleware from "../middlewares/admin.middleware.js";
 
 const ProblemsRouter = Router();
 

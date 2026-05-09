@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
-import Problem from "../../models/Problem/index.js";
-import Testcase from "../../models/Testcase/index.js";
+import Problem from "../models/Problem.js";
+import Testcase from "../models/Testcase.js";
 
 const GetTestcasesForProblemHandler = async (req, res) => {
     try
