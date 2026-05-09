@@ -1,6 +1,6 @@
-import Problem from "../../models/Problem/index.js";
-import Testcase from "../../models/Testcase/index.js";
-import User from "../../models/User/index.js";
+import Problem from "../models/Problem.js";
+import Testcase from "../models/Testcase.js";
+import User from "../models/User.js";
 
 const GetProblemsHandler = async (req, res) => {
     try

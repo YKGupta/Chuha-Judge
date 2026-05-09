@@ -4,9 +4,9 @@
 
 import { compare, hash } from 'bcrypt';
 import crypto from 'crypto';
-import User from '../../models/User/index.js';
-import SendMail from '../../utils/SendMail/index.js';
-import GenerateToken from '../../utils/GenerateToken/index.js';
+import User from '../models/User.js';
+import SendMail from '../utils/sendMail.js';
+import GenerateToken from '../utils/generateToken.js';
 import jwt from 'jsonwebtoken';
 
 const isDev = process.env.NODE_ENV === "development";

@@ -1,4 +1,4 @@
-import rateLimit from 'express-rate-limit';
+import { rateLimit } from 'express-rate-limit';
 
 const isDev = process.env.NODE_ENV === "development";
 

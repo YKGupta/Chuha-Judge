@@ -2,11 +2,11 @@ import 'dotenv/config';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import './database/connect.js';
-import Logger from './middlewares/Logger/index.js';
-import UserRouter from './routers/User/index.js';
-import ProblemsRouter from './routers/Problems/index.js';
-import TestcasesRouter from './routers/Testcases/index.js';
-import SubmissionsRouter from './routers/Submissions/index.router.js';
+import Logger from './middlewares/logger.middleware.js';
+import UserRouter from './routers/user.router.js';
+import ProblemsRouter from './routers/problem.router.js';
+import TestcasesRouter from './routers/testcase.router.js';
+import SubmissionsRouter from './routers/submission.router.js';
 
 const app = express();
 
