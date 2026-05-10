@@ -1,45 +1,48 @@
 import { model, Schema } from "mongoose";
 
-const ProblemSchema = Schema({
-    title: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    slug: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-        lowercase: true
-    },
-    difficulty: {
-        type: String,
-        enum: [ "easy", "medium", "hard" ],
-        required: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    limits: {
-        time: {
-            type: Number,
+const ProblemSchema = Schema(
+    {
+        title: {
+            type: String,
             required: true,
-            min: 1
+            trim: true,
         },
-        memory: {
-            type: Number,
+        slug: {
+            type: String,
             required: true,
-            min: 1
-        }
+            unique: true,
+            trim: true,
+            lowercase: true,
+        },
+        difficulty: {
+            type: String,
+            enum: ["easy", "medium", "hard"],
+            required: true,
+        },
+        description: {
+            type: String,
+            required: true,
+        },
+        limits: {
+            time: {
+                type: Number,
+                required: true,
+                min: 1,
+            },
+            memory: {
+                type: Number,
+                required: true,
+                min: 1,
+            },
+        },
+        constriants: {
+            type: String,
+        },
     },
-    constriants: {
-        type: String
+    {
+        timestamps: true,
     }
-}, {
-    timestamps: true
-});
+);
 
 const Problem = model("Problem", ProblemSchema, "Problems");
 

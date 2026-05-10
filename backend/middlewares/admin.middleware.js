@@ -1,41 +1,38 @@
 import User from "../models/User.js";
 
 const AdminMiddleware = async (req, res, next) => {
-    try
-    {
+    try {
         const user = await User.findById(req.user.userId).lean();
 
-        if(!user)
+        if (!user)
             return res.status(401).json({
                 success: false,
                 data: null,
                 error: {
                     message: "User not found",
-                    code: "USER_NOT_FOUND"
-                }
+                    code: "USER_NOT_FOUND",
+                },
             });
 
-        if(user.role !== "admin")
+        if (user.role !== "admin")
             return res.status(403).json({
                 success: false,
                 data: null,
                 error: {
                     message: "Forbidden",
-                    code: "FORBIDDEN"
-                }
-            })
+                    code: "FORBIDDEN",
+                },
+            });
 
         next();
-    }
-    catch(err)
-    {
+    } catch (err) {
         return res.status(500).json({
             success: false,
             data: null,
             error: {
                 message: err.message || "Internal Server Error",
-                code: "INTERNAL_SERVER_ERROR"
-            }
+                code: "INTERNAL_SERVER_ERROR",
+            },
         });
     }
 };
