@@ -3,60 +3,57 @@ import Submission from "../models/Submission.js";
 import EnqueueSubmission from "../utils/enqueueSubmission.js";
 
 const GetSubmissions = async (req, res) => {
-    try
-    {
-        const submissions = await Submission.find({ userId: req.user.userId }).sort({ createdAt: -1 }).lean();
+    try {
+        const submissions = await Submission.find({ userId: req.user.userId })
+            .sort({ createdAt: -1 })
+            .lean();
         return res.json({
             success: true,
-            data: submissions.map(s => ({
+            data: submissions.map((s) => ({
                 id: s._id,
                 problemId: s.problemId,
                 language: s.language,
                 status: s.status,
                 execution: s.execution,
-                createdAt: s.createdAt
+                createdAt: s.createdAt,
             })),
-            error: null
+            error: null,
         });
-    }
-    catch(e)
-    {
+    } catch (e) {
         return res.status(500).json({
             success: false,
             data: null,
             error: {
                 message: e.message || "Internal Server Error",
-                code: "INTERNAL_SERVER_ERROR"
-            }
+                code: "INTERNAL_SERVER_ERROR",
+            },
         });
     }
 };
 
 const GetSubmissionById = async (req, res) => {
-    try
-    {
+    try {
         const submissionId = req.params.submissionId;
-        if(!Types.ObjectId.isValid(submissionId))
+        if (!Types.ObjectId.isValid(submissionId))
             return res.status(400).json({
                 success: false,
                 data: null,
                 error: {
                     message: "Invalid submission ID",
-                    code: "INVALID_SUBMISSION_ID"
-                }
+                    code: "INVALID_SUBMISSION_ID",
+                },
             });
 
         const submission = await Submission.findById(submissionId).lean();
 
-        if(!submission)
+        if (!submission)
             return res.status(404).json({
                 success: false,
                 data: null,
                 error: {
                     message: "Submission not found",
-                    code: "SUBMISSION_NOT_FOUND"
-
-                }
+                    code: "SUBMISSION_NOT_FOUND",
+                },
             });
 
         return res.json({
@@ -69,57 +66,53 @@ const GetSubmissionById = async (req, res) => {
                 status: submission.status,
                 execution: submission.execution,
                 failedTestcase: submission.failedTestcase,
-                createdAt: submission.createdAt
+                createdAt: submission.createdAt,
             },
-            error: null
+            error: null,
         });
-    }
-    catch(e)
-    {
+    } catch (e) {
         return res.status(500).json({
             success: false,
             data: null,
             error: {
                 message: e.message || "Internal Server Error",
-                code: "INTERNAL_SERVER_ERROR"
-            }
+                code: "INTERNAL_SERVER_ERROR",
+            },
         });
     }
 };
 
 const CreateSubmission = async (req, res) => {
-
     let submissionId = null;
 
-    try
-    {
+    try {
         const { problemId, code, language } = req.body;
 
-        if(!problemId || !code || !language)
+        if (!problemId || !code || !language)
             return res.status(400).json({
                 success: false,
                 data: null,
                 error: {
                     message: "Missing required fields",
-                    code: "VALIDATION_ERROR"
-                }
+                    code: "VALIDATION_ERROR",
+                },
             });
-                    
-        if(!Types.ObjectId.isValid(problemId))
+
+        if (!Types.ObjectId.isValid(problemId))
             return res.status(400).json({
                 success: false,
                 data: null,
                 error: {
                     message: "Invalid problem ID",
-                    code: "INVALID_PROBLEM_ID"
-                }
+                    code: "INVALID_PROBLEM_ID",
+                },
             });
-        
+
         const submission = new Submission({
             userId: req.user.userId,
             problemId,
             code,
-            language
+            language,
         });
         await submission.save();
 
@@ -130,14 +123,12 @@ const CreateSubmission = async (req, res) => {
         return res.json({
             success: true,
             data: {
-                submissionId
+                submissionId,
             },
-            error: null
+            error: null,
         });
-    }
-    catch(e)
-    {
-        if(submissionId)
+    } catch (e) {
+        if (submissionId)
             await Submission.findByIdAndDelete(submissionId).catch(() => {});
 
         return res.status(500).json({
@@ -145,8 +136,8 @@ const CreateSubmission = async (req, res) => {
             data: null,
             error: {
                 message: e.message || "Internal Server Error",
-                code: "INTERNAL_SERVER_ERROR"
-            }
+                code: "INTERNAL_SERVER_ERROR",
+            },
         });
     }
 };

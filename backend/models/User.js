@@ -1,74 +1,74 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema } from "mongoose";
 
 const UserSchema = Schema({
     username: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     password: {
-        type: String
+        type: String,
     },
     role: {
         type: String,
         enum: ["user", "admin"],
-        default: "user"
+        default: "user",
     },
     verificationToken: {
         type: String,
-        index: true
+        index: true,
     },
     tokenExpiresAt: {
-        type: Date
+        type: Date,
     },
     lastVerificationEmailSent: {
-        type: Date
+        type: Date,
     },
     isVerified: {
         type: Boolean,
         default: false,
     },
     refreshToken: {
-        type: String
+        type: String,
     },
     oauthProvider: [
         {
             provider: {
                 type: String,
-                enum: [ "google", "github", null ]
+                enum: ["google", "github", null],
             },
             oauthId: {
                 type: String,
                 sparse: true,
-                unique: true
-            }
-        }
+                unique: true,
+            },
+        },
     ],
     profilePicture: {
         type: String,
-        default: ""
+        default: "",
     },
     rating: {
         type: Number,
-        default: 0
+        default: 0,
     },
     problemsSolved: {
         type: Number,
-        default: 0
+        default: 0,
     },
     submissionHistory: {
         type: Array,
-        default: []
+        default: [],
     },
     createdAt: {
         type: Date,
-        default: Date.now
-    }
+        default: Date.now,
+    },
 });
 
 const User = model("User", UserSchema, "Users");
