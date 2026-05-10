@@ -24,7 +24,7 @@ export default [
             "import/no-unresolved": "error", // Checks if file exists
             "import/named": "error", // Checks for named exports
             "import/no-self-import": "error", // Prevents importing a file into itself
-            "semi": ["error", "always"], // Mandate ending with semicolon
+            semi: ["error", "always"], // Mandate ending with semicolon
         },
     },
 ];
