@@ -1,7 +1,27 @@
+import { NavLink } from "react-router-dom";
 import "./App.css";
 
 function App() {
-    return <h1>Hello</h1>;
+    const isAuthenticated = false;
+
+    return (
+        <>
+            {isAuthenticated ? (
+                <NavLink to="/problems" end>
+                    Problems
+                </NavLink>
+            ) : (
+                <>
+                    <NavLink to="/login" end>
+                        Login
+                    </NavLink>
+                    <NavLink to="/signup" end>
+                        Signup
+                    </NavLink>
+                </>
+            )}
+        </>
+    );
 }
 
 export default App;
