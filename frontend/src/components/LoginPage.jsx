@@ -1,27 +1,18 @@
-import { useState } from "react";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from "react-router-dom";
+import LoginSchema from '../schemas/login.schema.js';
 
 const LoginPage = () => {
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-        error: "",
-    });
 
-    const inputChangedHandler = (e) => {
-        setFormData((p) => ({
-            ...p,
-            [e.target.name]: e.target.value
-        }));
-    };
-    
-    const [isLoading, setIsLoading] = useState(false);
+    const { register, handleSubmit, formState: { isSubmitting, errors } } = useForm({
+        resolver: zodResolver(LoginSchema)
+    });
     const navigate = useNavigate();
 
-    const HandleSubmit = async () => {
+    const onSubmit = async (formData) => {
         try {
-            setIsLoading(true);
-            const r = await fetch("http://localhost:8080/api/auth/login", {
+            const r = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -35,39 +26,30 @@ const LoginPage = () => {
             if (!response.success) throw new Error(response.error.code);
             else navigate("/problems");
         } catch (e) {
-            setFormData((p) => ({
-                ...p,
-                error: e.message
-            }));
-        } finally {
-            setIsLoading(false);
+            alert(JSON.stringify(e.message));
         }
     };
 
     return (
         <>
-            <input
-                type="email"
-                name="email"
-                id="email"
-                onChange={inputChangedHandler}
-                autoComplete="on"
-            />
-            <input
-                type="password"
-                name="password"
-                id="password"
-                onChange={inputChangedHandler}
-                autoComplete="on"
-            />
-            <input
-                type="submit"
-                value="Submit"
-                onClick={HandleSubmit}
-                disabled={isLoading}
-            />
-            <span>{isLoading ? "*" : ""}</span>
-            <p style={{ color: "red" }}>{formData.error}</p>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <input
+                    type="email"
+                    {...register("email")}
+                />
+                {errors.email && <p>{errors.email.message}</p>}
+                <input
+                    type="password"
+                    {...register("password")}
+                />
+                {errors.password && <p>{errors.password.message}</p>}
+                <input
+                    type="submit"
+                    value="Login"
+                    disabled={isSubmitting}
+                />
+                <span>{isSubmitting ? "*" : ""}</span>
+            </form>
         </>
     );
 };
