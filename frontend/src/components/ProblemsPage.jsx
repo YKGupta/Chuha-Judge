@@ -2,12 +2,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const ProblemsPage = () => {
-
-    const [ problems, setProblems ] = useState([]);
+    const [problems, setProblems] = useState([]);
 
     useEffect(() => {
         const getData = async () => {
-            const r = await fetch('http://localhost:8080/api/problems');
+            const r = await fetch("http://localhost:8080/api/problems");
             const response = await r.json();
             return response.data;
         };
@@ -15,7 +14,6 @@ const ProblemsPage = () => {
         getData().then((x) => {
             setProblems(x);
         });
-
     }, []);
 
     return (
@@ -27,14 +25,18 @@ const ProblemsPage = () => {
                 </tr>
             </thead>
             <tbody>
-                {
-                    problems.map((problem) => {
-                        return (<tr key={problem.slug}>
-                            <td><Link to={`/problems/${problem.slug}`}>{problem.title}</Link></td>
+                {problems.map((problem) => {
+                    return (
+                        <tr key={problem.slug}>
+                            <td>
+                                <Link to={`/problems/${problem.slug}`}>
+                                    {problem.title}
+                                </Link>
+                            </td>
                             <td>{problem.difficulty}</td>
-                        </tr>);
-                    })
-                }
+                        </tr>
+                    );
+                })}
             </tbody>
         </table>
     );
