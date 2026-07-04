@@ -1,20 +1,12 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useProblems } from "../hooks/problems.hook";
 
 const ProblemsPage = () => {
-    const [problems, setProblems] = useState([]);
+    const { data: problems, isLoading, error } = useProblems();
 
-    useEffect(() => {
-        const getData = async () => {
-            const r = await fetch("http://localhost:8080/api/problems");
-            const response = await r.json();
-            return response.data;
-        };
+    if (isLoading) return <p>Loading...</p>;
 
-        getData().then((x) => {
-            setProblems(x);
-        });
-    }, []);
+    if (error) return <p>Error fetching problems: {error.message}</p>;
 
     return (
         <table>

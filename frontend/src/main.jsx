@@ -32,7 +32,16 @@ const router = createBrowserRouter([
     },
 ]);
 
-const queryClient = new QueryClient();
+const isDev = import.meta.env.VITE_NODE_ENV === "development";
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: !isDev,
+            refetchOnWindowFocus: !isDev,
+        },
+    },
+});
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
