@@ -4,5 +4,8 @@ export const queryKeys = {
         all: ["problems"],
         detail: (problemId) => ["problems", problemId],
     },
-    submissions: ["submissions"],
+    submissions: {
+        all: ["submissions"],
+        detail: (submissionId) => ["submissions", submissionId],
+    },
 };

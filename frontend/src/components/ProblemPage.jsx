@@ -3,20 +3,20 @@ import { useProblem } from "../hooks/problems.hook";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import SubmissionSchema from "../schemas/submission.schema";
-import { useSubmission } from "../hooks/submission.hook";
+import { useCreateSubmission } from "../hooks/submission.hook";
 import readFile from "../lib/readFile.js";
 
 const ProblemPage = () => {
     const navigate = useNavigate();
 
-    const { problemId } = useParams();
-    const { data: problem, isLoading, error } = useProblem(problemId);
+    const { problemSlug } = useParams();
+    const { data: problem, isLoading, error } = useProblem(problemSlug);
 
     const { register, handleSubmit, formState: { isSubmitting, errors } } = useForm({
         resolver: zodResolver(SubmissionSchema)
     });
 
-    const submissionMutation = useSubmission();
+    const submissionMutation = useCreateSubmission();
 
     const onSubmit = async ({ file, language }) => {
         const code = await readFile(file);

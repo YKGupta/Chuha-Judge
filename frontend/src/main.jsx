@@ -8,6 +8,8 @@ import LoginPage from "./components/LoginPage.jsx";
 import SignupPage from "./components/SignupPage.jsx";
 import ProblemsPage from "./components/ProblemsPage.jsx";
 import ProblemPage from "./components/ProblemPage.jsx";
+import SubmissionsPage from "./components/SubmissionsPage.jsx";
+import SubmissionPage from "./components/SubmissionPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -27,8 +29,16 @@ const router = createBrowserRouter([
         element: <ProblemsPage />,
     },
     {
-        path: "/problems/:problemId",
+        path: "/submissions",
+        element: <SubmissionsPage />,
+    },
+    {
+        path: "/problems/:problemSlug",
         element: <ProblemPage />,
+    },
+    {
+        path: "/submissions/:submissionId",
+        element: <SubmissionPage />,
     },
 ]);
 
