@@ -1,12 +1,7 @@
-import axios from "axios";
+import { authenticatedApi } from "../lib/axios";
 
 export const getSubmissions = async () => {
-    const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/submissions`,
-        {
-            withCredentials: true
-        }
-    );
+    const response = await authenticatedApi.get("/submissions");
 
     if (!response.data.success) {
         throw new Error(response.data.error.code);
@@ -16,12 +11,7 @@ export const getSubmissions = async () => {
 };
 
 export const getSubmission = async (submissionId) => {
-    const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/submissions/${submissionId}`,
-        {
-            withCredentials: true
-        }
-    );
+    const response = await authenticatedApi.get(`/submissions/${submissionId}`);
 
     if (!response.data.success) {
         throw new Error(response.data.error.code);
@@ -31,18 +21,11 @@ export const getSubmission = async (submissionId) => {
 };
 
 export const submit = async ({ problemId, code, language }) => {
-    console.log(code);
-    const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/submissions`,
-        {
-            problemId,
-            code,
-            language,
-        },
-        {
-            withCredentials: true,
-        }
-    );
+    const response = await authenticatedApi.post("/submissions", {
+        problemId,
+        code,
+        language,
+    });
 
     if (!response.data.success) {
         throw new Error(response.data.error.code);

@@ -2,7 +2,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import LoginSchema from "../schemas/login.schema.js";
-import { useLogin } from "../hooks/auth.hooks.js";
+import { useLogin, useProfile } from "../hooks/auth.hooks.js";
+import { useEffect } from "react";
 
 const LoginPage = () => {
     const {
@@ -15,6 +16,7 @@ const LoginPage = () => {
 
     const navigate = useNavigate();
     const loginMutation = useLogin();
+    const { data, error: _error, isLoading } = useProfile();
 
     const onSubmit = async (formData) => {
         await loginMutation.mutateAsync(formData, {
@@ -23,9 +25,15 @@ const LoginPage = () => {
             },
             onError: (error) => {
                 alert(error.message);
-            }
+            },
         });
     };
+
+    useEffect(() => {
+        if (data) navigate("/problems");
+    }, [data, navigate]);
+
+    if (isLoading) return <p>Loading...</p>;
 
     return (
         <>

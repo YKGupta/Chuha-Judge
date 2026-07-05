@@ -2,7 +2,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import SignupSchema from "../schemas/signup.schema.js";
-import { useSignup } from "../hooks/auth.hooks.js";
+import { useProfile, useSignup } from "../hooks/auth.hooks.js";
+import { useEffect } from "react";
 
 const SignupPage = () => {
     const {
@@ -15,6 +16,7 @@ const SignupPage = () => {
 
     const navigate = useNavigate();
     const signupMutation = useSignup();
+    const { data, error: _error, isLoading } = useProfile();
 
     const onSubmit = async (formData) => {
         await signupMutation.mutateAsync(formData, {
@@ -26,6 +28,12 @@ const SignupPage = () => {
             },
         });
     };
+
+    useEffect(() => {
+        if (data) navigate("/problems");
+    }, [data, navigate]);
+
+    if (isLoading) return <p>Loading...</p>;
 
     return (
         <>

@@ -1,9 +1,7 @@
-import axios from "axios";
+import { publicApi } from "../lib/axios";
 
 export const getProblems = async () => {
-    const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/problems`
-    );
+    const response = await publicApi.get("/problems");
 
     if (!response.data.success) {
         throw new Error(response.data.error.code);
@@ -13,9 +11,7 @@ export const getProblems = async () => {
 };
 
 export const getProblem = async (problemId) => {
-    const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/problems/${problemId}`
-    );
+    const response = await publicApi.get(`/problems/${problemId}`);
 
     if (!response.data.success) {
         throw new Error(response.data.error.code);
