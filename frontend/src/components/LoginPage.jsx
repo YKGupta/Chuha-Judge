@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import LoginSchema from "../schemas/login.schema.js";
 import { useLogin, useProfile } from "../hooks/auth.hooks.js";
 import { useEffect } from "react";
+import { continueWithGithub, continueWithGoogle } from "../api/auth.api.js";
 
 const LoginPage = () => {
     const {
@@ -45,6 +46,8 @@ const LoginPage = () => {
                 <input type="submit" value="Login" disabled={isSubmitting} />
                 <span>{isSubmitting ? "*" : ""}</span>
             </form>
+            <button onClick={continueWithGoogle}>Continue with Google</button>
+            <button onClick={continueWithGithub}>Continue with Github</button>
         </>
     );
 };

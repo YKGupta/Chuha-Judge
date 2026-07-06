@@ -10,7 +10,7 @@ export const login = async ({ email, password }) => {
         throw new Error(response.data.error.code);
     }
 
-    return response.data;
+    return response.data.data;
 };
 
 export const signup = async ({ name, email, password }) => {
@@ -24,7 +24,15 @@ export const signup = async ({ name, email, password }) => {
         throw new Error(response.data.error.code);
     }
 
-    return response.data;
+    return response.data.data;
+};
+
+export const continueWithGoogle = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/oauth/google`;
+};
+
+export const continueWithGithub = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/oauth/github`;
 };
 
 export const getProfile = async () => {
@@ -34,7 +42,7 @@ export const getProfile = async () => {
         throw new Error(response.data.error.code);
     }
 
-    return response.data;
+    return response.data.data;
 };
 
 export const logout = async () => {
@@ -44,5 +52,5 @@ export const logout = async () => {
         throw new Error(response.data.error.code);
     }
 
-    return response.data;
+    return response.data.data;
 };

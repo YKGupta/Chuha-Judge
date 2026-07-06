@@ -28,7 +28,10 @@ const ProblemsPage = () => {
             {profileIsLoading ? (
                 <p>Loading...</p>
             ) : data ? (
-                <button onClick={handleLogout}>Logout</button>
+                <>
+                    <p>{data.user.username} - {data.user.email}</p>
+                    <button onClick={handleLogout}>Logout</button>
+                </>
             ) : (
                 <>
                     <Link to="/login">Login</Link>
