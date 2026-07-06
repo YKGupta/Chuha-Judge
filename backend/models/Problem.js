@@ -35,7 +35,7 @@ const ProblemSchema = Schema(
                 min: 1,
             },
         },
-        constriants: {
+        constraints: {
             type: String,
         },
     },
