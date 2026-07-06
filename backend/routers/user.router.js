@@ -24,14 +24,14 @@ const UserRouter = Router();
 UserRouter.post("/register", RegisterRequestLimiter, RegisterHandler);
 UserRouter.get("/verify-email", RegisterRequestLimiter, VerificationHandler);
 UserRouter.post("/login", LoginRequestLimiter, LoginHandler);
-UserRouter.get("/refresh-token", RefreshRequestLimiter, RefreshHandler);
+UserRouter.post("/refresh-token", RefreshRequestLimiter, RefreshHandler);
 UserRouter.get(
     "/profile",
     ProfileRequestLimiter,
     AuthMiddleware,
     ProfileHandler
 );
-UserRouter.get("/logout", LogoutHandler);
+UserRouter.post("/logout", LogoutHandler);
 UserRouter.get("/oauth/github", GithubRedirectHandler);
 UserRouter.get("/oauth/github/callback", GithubCallbackHandler);
 UserRouter.get("/oauth/google", GoogleRedirectHandler);

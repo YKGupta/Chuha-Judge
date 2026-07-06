@@ -38,7 +38,7 @@ export const getProfile = async () => {
 };
 
 export const logout = async () => {
-    const response = await authenticatedApi.get("/auth/logout");
+    const response = await authenticatedApi.post("/auth/logout");
 
     if (!response.data.success) {
         throw new Error(response.data.error.code);

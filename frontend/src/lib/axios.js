@@ -21,7 +21,7 @@ authenticatedApi.interceptors.response.use(
             !originalRequest._retry && originalRequest.url !== "/auth/refresh-token"
         ) {
             originalRequest._retry = true;
-            await authenticatedApi.get("/auth/refresh-token");
+            await authenticatedApi.post("/auth/refresh-token");
             return authenticatedApi(originalRequest);
         }
 
