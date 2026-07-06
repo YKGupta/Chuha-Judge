@@ -18,12 +18,31 @@ const AuthMiddleware = async (req, res, next) => {
         req.user = decoded;
         next();
     } catch (err) {
-        res.status(500).json({
+        if (err.name === "TokenExpiredError") {
+            return res.status(401).json({
+                success: false,
+                error: {
+                    code: "TOKEN_EXPIRED",
+                    message: "Access token expired",
+                },
+            });
+        }
+
+        if (err.name === "JsonWebTokenError") {
+            return res.status(401).json({
+                success: false,
+                error: {
+                    code: "INVALID_TOKEN",
+                    message: "Invalid token",
+                },
+            });
+        }
+
+        return res.status(500).json({
             success: false,
-            data: null,
             error: {
-                message: err.messaage || "Internal Server Error",
-                code: "INTERAL_SERVER_ERROR",
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Internal server error",
             },
         });
     }
