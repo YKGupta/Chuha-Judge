@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "../lib/queryKeys.js";
-import { getSubmission, getSubmissions, submit } from "../api/submissions.api.js";
+import {
+    getSubmission,
+    getSubmissions,
+    submit,
+} from "../api/submissions.api.js";
 
 export const useSubmissions = () => {
     return useQuery({

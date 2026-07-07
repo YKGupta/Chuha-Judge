@@ -29,7 +29,9 @@ const ProblemsPage = () => {
                 <p>Loading...</p>
             ) : data ? (
                 <>
-                    <p>{data.user.username} - {data.user.email}</p>
+                    <p>
+                        {data.user.username} - {data.user.email}
+                    </p>
                     <button onClick={handleLogout}>Logout</button>
                 </>
             ) : (

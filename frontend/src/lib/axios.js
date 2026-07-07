@@ -18,7 +18,8 @@ authenticatedApi.interceptors.response.use(
         if (
             (error.response?.status === 400 ||
                 error.response?.status === 401) &&
-            !originalRequest._retry && originalRequest.url !== "/auth/refresh-token"
+            !originalRequest._retry &&
+            originalRequest.url !== "/auth/refresh-token"
         ) {
             originalRequest._retry = true;
             await authenticatedApi.post("/auth/refresh-token");

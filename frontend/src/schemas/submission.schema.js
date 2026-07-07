@@ -8,8 +8,8 @@ const SubmissionSchema = z.object({
         })
         .transform((files) => files[0]),
     language: z.enum(["python"], {
-        error: "Please select a valid language"
-    })
+        error: "Please select a valid language",
+    }),
 });
 
 export default SubmissionSchema;
