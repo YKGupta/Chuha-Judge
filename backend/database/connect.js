@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
 
-mongoose
-    .connect(process.env.DB_URI)
-    .then(() => {
+export default async function connectDB() {
+    try {
+        await mongoose.connect(process.env.DB_URI);
+
         console.log(`Connected to Database(${process.env.DB_URI})`);
-    })
-    .catch((err) => {
+    } catch (err) {
         console.log(
-            `Encountered error while connecting to database: ${JSON.stringify(err)}`
+            `Encountered error while connecting to database: ${JSON.stringify(err.message)}`
         );
-    });
+        process.exit(1);
+    }
+}

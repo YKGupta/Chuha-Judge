@@ -1,0 +1,57 @@
+[
+    {
+        "title": "Two Sum",
+        "slug": "two-sum",
+        "difficulty": "easy",
+        "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+        "limits": {
+            "time": 1000,
+            "memory": 256
+        },
+        "constraints": "2 <= nums.length <= 10^4\n-10^9 <= nums[i] <= 10^9"
+    },
+    {
+        "title": "Valid Parentheses",
+        "slug": "valid-parentheses",
+        "difficulty": "easy",
+        "description": "Given a string containing just the characters (), {}, and [], determine if the input string is valid.",
+        "limits": {
+            "time": 1000,
+            "memory": 256
+        },
+        "constraints": "1 <= s.length <= 10^4"
+    },
+    {
+        "title": "Binary Search",
+        "slug": "binary-search",
+        "difficulty": "easy",
+        "description": "Implement binary search on a sorted array.",
+        "limits": {
+            "time": 1000,
+            "memory": 256
+        },
+        "constraints": "1 <= nums.length <= 10^5"
+    },
+    {
+        "title": "Merge Intervals",
+        "slug": "merge-intervals",
+        "difficulty": "medium",
+        "description": "Merge all overlapping intervals.",
+        "limits": {
+            "time": 1000,
+            "memory": 256
+        },
+        "constraints": "1 <= intervals.length <= 10^4"
+    },
+    {
+        "title": "Median of Two Sorted Arrays",
+        "slug": "median-of-two-sorted-arrays",
+        "difficulty": "hard",
+        "description": "Find the median of two sorted arrays in O(log(min(n,m))).",
+        "limits": {
+            "time": 2000,
+            "memory": 512
+        },
+        "constraints": "0 <= m,n <= 1000"
+    }
+]

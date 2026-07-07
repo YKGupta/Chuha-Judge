@@ -1,0 +1,38 @@
+[
+    {
+        "username": "admin",
+        "email": "admin@gmail.com",
+        "password": "000000",
+        "role": "admin",
+        "isVerified": true,
+        "profilePicture": "",
+        "rating": 2500,
+        "problemsSolved": 342,
+        "submissionHistory": []
+    },
+    {
+        "username": "alice",
+        "email": "alice@gmail.com",
+        "password": "000000",
+        "role": "user",
+        "isVerified": true,
+        "profilePicture": "",
+        "rating": 1450,
+        "problemsSolved": 76,
+        "submissionHistory": []
+    },
+    {
+        "username": "bob",
+        "email": "bob@gmail.com",
+        "password": "000000",
+        "role": "user",
+        "isVerified": false,
+        "verificationToken": "verify-token-bob",
+        "tokenExpiresAt": "2026-12-31T23:59:59Z",
+        "lastVerificationEmailSent": "2025-02-10T08:00:00Z",
+        "profilePicture": "",
+        "rating": 980,
+        "problemsSolved": 21,
+        "submissionHistory": []
+    }
+]
