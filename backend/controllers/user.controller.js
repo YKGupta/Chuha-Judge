@@ -535,13 +535,7 @@ const GoogleCallbackHandler = async (req, res) => {
             maxAge: Number(process.env.REFRESH_TOKEN_TTL) * 24 * 60 * 60 * 1000,
         });
 
-        return res.json({
-            success: true,
-            data: {
-                message: "User logged in successfully!",
-            },
-            error: null,
-        });
+        return res.redirect(`${process.env.FRONTEND_URL}/problems`);
     } catch (err) {
         res.status(500).json({
             success: false,
@@ -679,13 +673,7 @@ const GithubCallbackHandler = async (req, res) => {
             maxAge: Number(process.env.REFRESH_TOKEN_TTL) * 24 * 60 * 60 * 1000,
         });
 
-        return res.json({
-            success: true,
-            data: {
-                message: "User logged in successfully!",
-            },
-            error: null,
-        });
+        return res.redirect(`${process.env.FRONTEND_URL}/problems`);
     } catch (err) {
         res.status(500).json({
             success: false,

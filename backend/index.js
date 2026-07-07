@@ -1,4 +1,5 @@
 import "dotenv/config";
+import cors from "cors";
 import express from "express";
 import cookieParser from "cookie-parser";
 import "./database/connect.js";
@@ -10,6 +11,12 @@ import SubmissionsRouter from "./routers/submission.router.js";
 
 const app = express();
 
+app.use(
+    cors({
+        origin: process.env.FRONTEND_URL,
+        credentials: true
+    })
+);
 app.set("trust proxy", "loopback");
 app.use(express.json());
 app.use(cookieParser());
